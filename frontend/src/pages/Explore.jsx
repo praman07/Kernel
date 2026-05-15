@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import ProjectCard from '../components/ProjectCard';
 import BlogCard from '../components/BlogCard';
 import { Command, Users, GitBranch, ArrowRight, TrendingUp } from 'lucide-react';
@@ -48,9 +48,9 @@ export default function Explore() {
       setHasSearched(true);
       try {
         const [projectsRes, blogsRes, usersRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/projects?keyword=${searchQuery}`),
-          axios.get(`http://localhost:5000/api/blogs?keyword=${searchQuery}`),
-          axios.get(`http://localhost:5000/api/users?keyword=${searchQuery}`),
+          api.get(`/projects?keyword=${searchQuery}`),
+          api.get(`/blogs?keyword=${searchQuery}`),
+          api.get(`/users?keyword=${searchQuery}`),
         ]);
         setProjects(projectsRes.data);
         setBlogs(blogsRes.data);
@@ -68,7 +68,7 @@ export default function Explore() {
   useEffect(() => {
     const fetchTop = async () => {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/users/top');
+        const { data } = await api.get('/users/top');
         setTopUsers(data);
       } catch (err) {
         console.error(err);

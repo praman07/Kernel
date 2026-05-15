@@ -1,7 +1,7 @@
 // Kernel Profile Page - Optimized
 import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { Calendar, Link as LinkIcon, ExternalLink, ArrowLeft, Smile, Edit3, Share2, Code, Briefcase, Globe } from 'lucide-react';
 import ProjectCard from '../components/ProjectCard';
@@ -115,9 +115,9 @@ export default function Profile() {
       setIsLoading(true);
       try {
         const [userRes, projectsRes, blogsRes] = await Promise.all([
-          axios.get(`http://localhost:5000/api/users/${fetchId}`),
-          axios.get('http://localhost:5000/api/projects'),
-          axios.get('http://localhost:5000/api/blogs'),
+          api.get(`/users/${fetchId}`),
+          api.get('/projects'),
+          api.get('/blogs'),
         ]);
         if (cancelled) return;
 
@@ -150,11 +150,7 @@ export default function Profile() {
   const handleFollow = async () => {
     if (!currentUser) return;
     try {
-      const { data } = await axios.post(
-        `http://localhost:5000/api/users/${profileUser._id}/follow`,
-        {},
-        { headers: { Authorization: `Bearer ${currentUser.token}` } }
-      );
+      const { data } = await api.post(`/users/${profileUser._id}/follow`);
       setIsFollowing(data.isFollowing);
       setFollowersCount(data.followersCount);
 
@@ -174,9 +170,7 @@ export default function Profile() {
   const toggleFollowFromModal = async (targetId) => {
     if (!currentUser) return;
     try {
-      const { data } = await axios.post(`http://localhost:5000/api/users/${targetId}/follow`, {}, {
-        headers: { Authorization: `Bearer ${currentUser.token}` }
-      });
+      const { data } = await api.post(`/users/${targetId}/follow`);
 
       // Update global context
       const updatedUser = { ...currentUser };
@@ -196,10 +190,8 @@ export default function Profile() {
 
   const handleUpdateStatus = async () => {
     try {
-      const { data } = await axios.put('http://localhost:5000/api/users/profile', {
+      const { data } = await api.put('/users/profile', {
         status: { ...statusInput, updatedAt: new Date() }
-      }, {
-        headers: { Authorization: `Bearer ${currentUser.token}` }
       });
       setProfileUser({ ...profileUser, status: data.status });
       setShowStatusModal(false);

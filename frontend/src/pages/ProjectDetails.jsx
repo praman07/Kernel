@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { Code2, ExternalLink, ArrowLeft, Trash2, Edit3, TerminalSquare, Clock } from 'lucide-react';
 import TextWithHashtags from '../components/TextWithHashtags';
@@ -18,7 +18,7 @@ export default function ProjectDetails() {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/projects/${id}`);
+        const { data } = await api.get(`/projects/${id}`);
         setProject(data);
       } catch (error) {
         console.error('Error fetching project', error);
@@ -32,8 +32,7 @@ export default function ProjectDetails() {
   const handleDelete = async () => {
     if (window.confirm('Execute rm -rf on this repository?')) {
       try {
-        const config = { headers: { Authorization: `Bearer ${user.token}` } };
-        await axios.delete(`http://localhost:5000/api/projects/${id}`, config);
+        await api.delete(`/projects/${id}`);
         toast.success('Repository deleted');
         setTimeout(() => navigate('/feed'), 1000);
       } catch (error) {
@@ -46,8 +45,7 @@ export default function ProjectDetails() {
     e.preventDefault();
     if (!commentText.trim()) return;
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.post(`http://localhost:5000/api/projects/${id}/comment`, { text: commentText }, config);
+      const { data } = await api.post(`/projects/${id}/comment`, { text: commentText });
       setProject({ ...project, comments: [...project.comments, data] });
       setCommentText('');
     } catch (error) {

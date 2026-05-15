@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { Terminal, Home, Compass, PlusSquare, User, Bell, LogOut, Bookmark, Search } from 'lucide-react';
 import CommandPalette from './CommandPalette';
@@ -18,7 +18,7 @@ export default function Layout({ children }) {
 
   useEffect(() => {
     if (user) {
-      axios.get('http://localhost:5000/api/users')
+      api.get('/users')
         .then(({ data }) => {
           const others = data.filter(u => u._id !== user._id && !user.following?.some(fid => fid.toString() === u._id.toString()));
 
@@ -34,14 +34,12 @@ export default function Layout({ children }) {
         .catch(err => console.error(err));
 
       // Fetch unread notification count
-      axios.get('http://localhost:5000/api/notifications', {
-        headers: { Authorization: `Bearer ${user.token}` }
-      }).then(({ data }) => {
+      api.get('/notifications').then(({ data }) => {
         setUnreadCount(data.filter(n => !n.read).length);
       }).catch(() => { });
 
       // Fetch real trends
-      axios.get('http://localhost:5000/api/projects/trends')
+      api.get('/projects/trends')
         .then(({ data }) => setTrends(data))
         .catch(() => { });
 
@@ -60,9 +58,7 @@ export default function Layout({ children }) {
 
   const handleFollow = async (targetId) => {
     try {
-      await axios.post(`http://localhost:5000/api/users/${targetId}/follow`, {}, {
-        headers: { Authorization: `Bearer ${user.token}` }
-      });
+      await api.post(`/users/${targetId}/follow`);
       setSuggestedUsers(prev => prev.filter(u => u._id !== targetId));
     } catch (err) { console.error(err); }
   };

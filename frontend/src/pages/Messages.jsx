@@ -21,6 +21,7 @@ export default function Messages() {
   const socket = useRef(null);
   const messagesEndRef = useRef(null);
   const activeChatRef = useRef(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     activeChatRef.current = activeChat;
@@ -110,7 +111,6 @@ export default function Messages() {
   };
 
   const deleteConversation = async (userId) => {
-    if (!window.confirm('Delete this conversation permanently?')) return;
     try {
       await api.delete(`/messages/${userId}`);
       setMessages([]);
@@ -202,7 +202,7 @@ export default function Messages() {
                 </div>
               </div>
                <button 
-                 onClick={() => deleteConversation(activeChat._id)}
+                 onClick={() => setShowDeleteConfirm(true)}
                  className="text-kernel-600 hover:text-red-500 transition-colors p-1"
                  title="Delete Conversation"
                >
@@ -246,6 +246,44 @@ export default function Messages() {
           </div>
         )}
       </div>
+
+      {/* Custom Delete Confirm Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowDeleteConfirm(false)} />
+          <div className="relative w-full max-w-sm bg-kernel-950 border border-red-900 shadow-[0_0_50px_rgba(127,29,29,0.2)] overflow-hidden">
+            <div className="bg-red-950/20 border-b border-red-900/50 px-4 py-3 flex items-center gap-2">
+              <Trash2 size={14} className="text-red-500" />
+              <h3 className="font-mono text-xs font-bold text-red-500 uppercase tracking-widest">Danger Zone</h3>
+            </div>
+            <div className="p-6">
+              <p className="font-mono text-xs text-kernel-300 leading-relaxed mb-6">
+                Are you sure you want to permanently purge this conversation? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 px-4 py-2 border border-kernel-800 text-kernel-500 font-mono text-[10px] hover:text-kernel-100 transition-colors uppercase"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    deleteConversation(activeChat._id);
+                    setShowDeleteConfirm(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white font-mono text-[10px] font-bold hover:bg-red-500 transition-colors uppercase shadow-hard-sm"
+                >
+                  Purge Data
+                </button>
+              </div>
+            </div>
+            <div className="bg-kernel-900/50 border-t border-kernel-800 px-4 py-2 text-center">
+              <span className="font-mono text-[9px] text-kernel-700 uppercase">Warning: permanent_deletion_protocol</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

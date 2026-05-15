@@ -2,23 +2,25 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../utils/api';
 import { io } from 'socket.io-client';
-import { useParams } from 'react-router-dom';
-import { Send, User as UserIcon, Terminal } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Send, User as UserIcon, Terminal, Trash2, ArrowLeft, Menu, X } from 'lucide-react';
 import moment from 'moment';
 
 const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 export default function Messages() {
   const { userId } = useParams();
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const [conversations, setConversations] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const socket = useRef(null);
   const messagesEndRef = useRef(null);
-  const activeChatRef = useRef(null); // Critical for real-time listener
+  const activeChatRef = useRef(null);
 
   useEffect(() => {
     activeChatRef.current = activeChat;
@@ -29,27 +31,35 @@ export default function Messages() {
   };
 
   useEffect(() => {
-    // Initialize socket once
-    socket.current = io(SOCKET_URL);
+    if (!user) return;
+
+    socket.current = io(SOCKET_URL, {
+      transports: ['websocket'],
+      reconnection: true
+    });
     
-    if (user) {
+    socket.current.on('connect', () => {
       socket.current.emit('register', user._id);
-    }
+    });
 
     socket.current.on('receive_message', (msg) => {
       const active = activeChatRef.current;
-      // If we are currently chatting with the sender
-      if (active && (msg.sender === active._id || msg.sender?._id === active._id)) {
+      const senderId = (msg.sender?._id || msg.sender)?.toString();
+      const activeId = active?._id?.toString();
+      
+      if (activeId && senderId === activeId) {
         setMessages(prev => [...prev, msg]);
-        // Also hit backend to mark this specific message as read
-        api.get(`/messages/${active._id}`).catch(() => {});
+        api.get(`/messages/${activeId}`).catch(() => {});
       }
       fetchConversations();
     });
 
     socket.current.on('message_sent', (msg) => {
       const active = activeChatRef.current;
-      if (active && (msg.receiver === active._id || msg.receiver?._id === active._id)) {
+      const receiverId = (msg.receiver?._id || msg.receiver)?.toString();
+      const activeId = active?._id?.toString();
+      
+      if (activeId && receiverId === activeId) {
         setMessages(prev => [...prev, msg]);
       }
       fetchConversations();
@@ -60,7 +70,7 @@ export default function Messages() {
         socket.current.disconnect();
       }
     };
-  }, [user]); // Only re-run if user changes (e.g. login/logout)
+  }, [user?._id]);
 
   useEffect(() => {
     const initChat = async () => {
@@ -99,6 +109,16 @@ export default function Messages() {
     } catch (err) { console.error(err); }
   };
 
+  const deleteConversation = async (userId) => {
+    if (!window.confirm('Delete this conversation permanently?')) return;
+    try {
+      await api.delete(`/messages/${userId}`);
+      setMessages([]);
+      setActiveChat(null);
+      fetchConversations();
+    } catch (err) { console.error(err); }
+  };
+
   const sendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !activeChat) return;
@@ -112,15 +132,19 @@ export default function Messages() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-kernel-950 font-mono">
-      {/* Sidebar */}
-      <div className="w-80 border-r border-kernel-800 flex flex-col">
-        <div className="p-4 border-b border-kernel-800 bg-kernel-900">
+    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-kernel-950 font-mono relative">
+      {/* Sidebar - Hidden when chat is active */}
+      <div 
+        className={`bg-kernel-950 border-r border-kernel-800 flex flex-col transition-all duration-300 ease-in-out
+          ${activeChat ? 'hidden' : 'flex w-full'} 
+        `}
+      >
+        <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex justify-between items-center whitespace-nowrap overflow-hidden">
           <h2 className="text-sm font-bold text-kernel-100 flex items-center gap-2">
             <Terminal size={14} /> CHAT_DAEMON
           </h2>
         </div>
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto whitespace-nowrap">
           {conversations.length > 0 ? conversations.map((conv) => (
             <div
               key={conv.user._id}
@@ -131,11 +155,11 @@ export default function Messages() {
               className={`p-4 border-b border-kernel-800 cursor-pointer transition-colors relative ${activeChat?._id === conv.user._id ? 'bg-kernel-900 border-l-2 border-l-blue-500' : 'hover:bg-kernel-900/50'}`}
             >
               {conv.isUnread && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-500 rounded-full" />
               )}
               <div className="flex gap-3">
                 {conv.user.profilePicture ? (
-                  <img src={conv.user.profilePicture} alt="" className="w-10 h-10 border border-kernel-700" />
+                  <img src={conv.user.profilePicture} alt="" className="w-10 h-10 border border-kernel-700 object-cover" />
                 ) : (
                   <div className="w-10 h-10 bg-kernel-800 border border-kernel-700 flex items-center justify-center">
                     <UserIcon size={20} className="text-kernel-500" />
@@ -158,26 +182,42 @@ export default function Messages() {
         </div>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-kernel-950/50 relative">
-        {!activeChat ? (
-          <div className="flex-1 flex items-center justify-center text-kernel-700 flex-col gap-4">
-            <Terminal size={48} className="opacity-20" />
-            <span className="text-xs tracking-widest animate-pulse">SELECT_TARGET_FOR_HANDSHAKE</span>
-          </div>
-        ) : (
-          <>
-            <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex items-center gap-3">
-               <span className="text-xs font-bold text-kernel-100">$ chatting_with --user @{activeChat.name.toLowerCase().replace(/\s+/g, '_')}</span>
+      {/* Chat Window */}
+      <div className={`flex-1 flex flex-col ${!activeChat ? 'hidden' : 'flex'}`}>
+        {activeChat && (
+          <div className="flex-1 flex flex-col h-full overflow-hidden bg-kernel-950/50">
+            {/* Chat Header */}
+            <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {/* Back Button: cd.. */}
+                <button 
+                  onClick={() => setActiveChat(null)} 
+                  className="px-2 py-1 bg-kernel-800 border border-kernel-700 text-kernel-400 hover:text-blue-400 font-mono text-xs transition-colors rounded-sm"
+                >
+                  cd ..
+                </button>
+                <div className="flex flex-col">
+                  <span className="text-xs font-bold text-kernel-100">@{activeChat.name.toLowerCase().replace(/\s+/g, '_')}</span>
+                  <span className="text-[10px] text-kernel-600 uppercase font-mono">active_session</span>
+                </div>
+              </div>
+               <button 
+                 onClick={() => deleteConversation(activeChat._id)}
+                 className="text-kernel-600 hover:text-red-500 transition-colors p-1"
+                 title="Delete Conversation"
+               >
+                 <Trash2 size={16} />
+               </button>
             </div>
             
+            {/* Messages Stream */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg, i) => {
                 const isMine = (msg.sender === user._id || msg.sender?._id === user._id);
                 return (
                   <div key={i} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[70%] p-3 border ${isMine ? 'bg-blue-900/20 border-blue-800 text-blue-100' : 'bg-kernel-900 border-kernel-800 text-kernel-200'}`}>
-                      <p className="text-xs leading-relaxed">{msg.text}</p>
+                    <div className={`max-w-[85%] md:max-w-[70%] p-3 border ${isMine ? 'bg-blue-900/20 border-blue-800 text-blue-100' : 'bg-kernel-900 border-kernel-800 text-kernel-200'}`}>
+                      <p className="text-xs leading-relaxed break-words">{msg.text}</p>
                       <span className="text-[9px] text-kernel-600 mt-1 block text-right">
                         {moment(msg.createdAt).format('HH:mm')}
                       </span>
@@ -188,21 +228,22 @@ export default function Messages() {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Input Area */}
             <form onSubmit={sendMessage} className="p-4 border-t border-kernel-800 bg-kernel-900">
-              <div className="flex gap-3">
+              <div className="flex gap-3 bg-kernel-950 border border-kernel-800 focus-within:border-blue-500 transition-colors p-1 pr-2">
                 <input
                   type="text"
                   placeholder="Type message..."
-                  className="flex-1 bg-kernel-950 border border-kernel-800 p-2 text-xs text-kernel-100 font-mono focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-transparent p-2 text-xs text-kernel-100 font-mono focus:outline-none"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                 />
-                <button type="submit" className="p-2 bg-blue-600 text-white hover:bg-blue-500 transition-colors">
-                  <Send size={18} />
+                <button type="submit" className="p-1.5 text-blue-500 hover:text-blue-400 transition-colors">
+                  <Send size={20} />
                 </button>
               </div>
             </form>
-          </>
+          </div>
         )}
       </div>
     </div>

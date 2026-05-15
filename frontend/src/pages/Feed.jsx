@@ -100,30 +100,6 @@ export default function Feed() {
         </button>
       </div>
 
-      {/* System Event Stream (Alive indicator) */}
-      <div className="bg-kernel-900/40 border-b border-kernel-800 px-4 py-2 overflow-hidden flex items-center gap-3">
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-          <span className="font-mono text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Live Stream</span>
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <div className="flex gap-8 animate-marquee whitespace-nowrap">
-            {systemEvents.map(event => (
-              <div key={event.id} className="flex items-center gap-2 font-mono text-[10px] text-kernel-500">
-                <span className="text-kernel-600">[{event.time}]</span>
-                <span className="text-kernel-400">{event.text}</span>
-              </div>
-            ))}
-            {/* Duplicate for seamless marquee */}
-            {systemEvents.map(event => (
-              <div key={`dup-${event.id}`} className="flex items-center gap-2 font-mono text-[10px] text-kernel-500">
-                <span className="text-kernel-600">[{event.time}]</span>
-                <span className="text-kernel-400">{event.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Inline Composer */}
       <div className="p-4 border-b border-kernel-800 hidden sm:block relative">

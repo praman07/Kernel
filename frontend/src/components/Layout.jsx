@@ -2,8 +2,11 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { Terminal, Home, Compass, PlusSquare, User, Bell, LogOut, Bookmark, Search } from 'lucide-react';
+import { Terminal, Home, Compass, PlusSquare, User, Bell, LogOut, Bookmark, Search, X } from 'lucide-react';
 import CommandPalette from './CommandPalette';
+import { io } from 'socket.io-client';
+
+const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 export default function Layout({ children }) {
   const { user, logout } = useContext(AuthContext);
@@ -15,7 +18,27 @@ export default function Layout({ children }) {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [trends, setTrends] = useState([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [isMainSidebarOpen, setIsMainSidebarOpen] = useState(true);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket']
+    });
+
+    socket.emit('register', user._id);
+
+    socket.on('receive_message', () => {
+      // Refresh unread count when a new message arrives anywhere
+      api.get('/messages/unread')
+        .then(({ data }) => setUnreadMessages(data.count))
+        .catch(() => { });
+    });
+
+    return () => socket.disconnect();
+  }, [user?._id]);
 
   useEffect(() => {
     if (user) {
@@ -102,13 +125,19 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-kernel-950 flex justify-center">
 
       {/* Desktop Left Sidebar */}
-      <aside className="hidden sm:flex flex-col w-20 xl:w-80 border-r border-kernel-800 sticky top-0 h-screen overflow-y-auto px-2 xl:px-4 py-6">
-        <Link to="/feed" className="flex items-center gap-4 px-2 xl:px-4 mb-8 group">
-          <div className="w-8 h-8 border-2 border-kernel-600 flex items-center justify-center bg-kernel-900 group-hover:bg-kernel-800 transition-colors shrink-0 shadow-hard-sm">
-            <Terminal size={16} className="text-kernel-300" />
+      <aside className={`hidden sm:flex flex-col border-r border-kernel-800 sticky top-0 h-screen overflow-y-auto px-2 py-6 transition-all duration-300 ease-in-out ${isMainSidebarOpen ? 'w-20 xl:w-80 xl:px-4' : 'w-0 border-none px-0'}`}>
+        <div className={isMainSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
+          <div className="flex items-center justify-between mb-8 px-2 xl:px-4">
+            <Link to="/feed" className="flex items-center gap-4 group">
+              <div className="w-8 h-8 border-2 border-kernel-600 flex items-center justify-center bg-kernel-900 group-hover:bg-kernel-800 transition-colors shrink-0 shadow-hard-sm">
+                <Terminal size={16} className="text-kernel-300" />
+              </div>
+              <span className="font-mono font-bold tracking-tight text-kernel-100 text-xl hidden xl:block">Kernel</span>
+            </Link>
+            <button onClick={() => setIsMainSidebarOpen(false)} className="hidden xl:block text-kernel-600 hover:text-kernel-100 p-1">
+              <X size={18} />
+            </button>
           </div>
-          <span className="font-mono font-bold tracking-tight text-kernel-100 text-xl hidden xl:block">Kernel</span>
-        </Link>
 
         {/* Quick Search Shortcut */}
         <button
@@ -156,7 +185,7 @@ export default function Layout({ children }) {
             <div className="relative">
               <Terminal size={22} className={isActive('/messages') ? 'text-kernel-100' : ''} />
               {unreadMessages > 0 && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-kernel-950 animate-pulse" />
+                <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-kernel-950" />
               )}
             </div>
             <span className="hidden xl:block">Messages</span>
@@ -190,7 +219,18 @@ export default function Layout({ children }) {
             <span className="hidden xl:block text-sm font-bold">Logout</span>
           </button>
         </div>
-      </aside>
+      </div>
+    </aside>
+
+      {/* Floating Toggle for Sidebar (Desktop) */}
+      {!isMainSidebarOpen && (
+        <button 
+          onClick={() => setIsMainSidebarOpen(true)}
+          className="hidden sm:flex fixed top-4 left-4 z-50 p-2 bg-kernel-900 border border-kernel-800 text-kernel-400 hover:text-kernel-100 transition-all shadow-hard-sm"
+        >
+          <Terminal size={20} />
+        </button>
+      )}
 
       {/* Main Center Feed */}
       <main className="flex-1 w-full sm:max-w-xl md:max-w-2xl lg:max-w-[850px] border-r border-kernel-800 pb-20 sm:pb-0 min-h-screen">
@@ -230,9 +270,6 @@ export default function Layout({ children }) {
                     <div className="truncate flex-1">
                       <div className="flex items-center gap-1.5 truncate">
                         <p className="font-bold text-kernel-100 text-sm truncate group-hover:underline">{dev.name}</p>
-                        {dev.isRecentlyActive && (
-                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" title="Recently active" />
-                        )}
                       </div>
                       <p className="font-mono text-[10px] text-kernel-600 truncate">@{dev.name.toLowerCase().replace(/\s+/g, '_')}</p>
                     </div>
@@ -309,7 +346,7 @@ export default function Layout({ children }) {
             <div className="relative">
               <Terminal size={22} />
               {unreadMessages > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-kernel-950 animate-pulse" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-kernel-950" />
               )}
             </div>
           </Link>

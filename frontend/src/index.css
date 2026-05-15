@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+html {
+  font-size: 125%;
+}
+
+@layer base {
+  body {
+    @apply bg-kernel-950 text-kernel-300 antialiased font-sans selection:bg-kernel-700 selection:text-white;
+  }
+}
+
+@layer utilities {
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle at center, #334155 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  
+  .bg-dot-pattern-dense {
+    background-image: radial-gradient(circle at center, #334155 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  .animate-marquee {
+    animation: marquee 40s linear infinite;
+  }
+
+  .shadow-hard {
+    box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 0.4);
+  }
+
+  .shadow-hard-sm {
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Custom Scrollbar for a raw, terminal feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-kernel-950 border-l border-kernel-800;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-kernel-700 rounded-none;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-kernel-600;
+}

@@ -9,6 +9,7 @@ export default function CreateBlog() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -67,19 +68,48 @@ export default function CreateBlog() {
             placeholder="Journal Title..."
           />
 
+          <div className="flex bg-kernel-950 border border-kernel-800 p-0.5 rounded-sm self-start mb-[-12px] z-10 ml-4">
+            <button
+              type="button"
+              onClick={() => setIsPreview(false)}
+              className={`px-4 py-1.5 font-mono text-[11px] uppercase transition-colors ${!isPreview ? 'bg-kernel-800 text-kernel-100 shadow-sm' : 'text-kernel-600 hover:text-kernel-400'}`}
+            >
+              Compose
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsPreview(true)}
+              className={`px-4 py-1.5 font-mono text-[11px] uppercase transition-colors ${isPreview ? 'bg-kernel-800 text-kernel-100 shadow-sm' : 'text-kernel-600 hover:text-kernel-400'}`}
+            >
+              Preview
+            </button>
+          </div>
+
           <div className="relative">
-            <textarea
-              name="content"
-              required
-              rows="16"
-              className="w-full bg-kernel-950 border border-kernel-800 p-4 text-kernel-300 placeholder-kernel-700 focus:outline-none focus:border-kernel-500 font-serif leading-relaxed transition-colors resize-y"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Write using markdown. Start dumping knowledge..."
-            />
-            <div className="absolute bottom-4 right-4 text-kernel-600 font-mono text-[10px] pointer-events-none">
-              Markdown Supported
-            </div>
+            {!isPreview ? (
+              <textarea
+                name="content"
+                required
+                rows="16"
+                className="w-full bg-kernel-950 border border-kernel-800 p-4 text-kernel-300 placeholder-kernel-700 focus:outline-none focus:border-kernel-500 font-serif leading-relaxed transition-colors resize-y"
+                value={formData.content}
+                onChange={handleChange}
+                placeholder="Write using markdown. Start dumping knowledge..."
+              />
+            ) : (
+              <div className="w-full bg-kernel-950 border border-kernel-800 p-8 min-h-[420px] text-kernel-200 font-mono text-sm overflow-y-auto prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-black">
+                {formData.content ? (
+                  <div className="whitespace-pre-wrap">{formData.content}</div>
+                ) : (
+                  <span className="text-kernel-700 italic">No bytes to display...</span>
+                )}
+              </div>
+            )}
+            {!isPreview && (
+              <div className="absolute bottom-4 right-4 text-kernel-600 font-mono text-[10px] pointer-events-none">
+                Markdown Supported
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-4 bg-kernel-950 border border-kernel-800 p-2 pl-4">

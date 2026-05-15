@@ -6,6 +6,12 @@ exports.getMessages = async (req, res) => {
     const { userId } = req.params;
     const myId = req.user._id;
 
+    // Mark messages as read
+    await Message.updateMany(
+      { sender: userId, receiver: myId, read: false },
+      { $set: { read: true } }
+    );
+
     const messages = await Message.find({
       $or: [
         { sender: myId, receiver: userId },
@@ -14,6 +20,16 @@ exports.getMessages = async (req, res) => {
     }).sort({ createdAt: 1 });
 
     res.json(messages);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get unread count
+exports.getUnreadCount = async (req, res) => {
+  try {
+    const count = await Message.countDocuments({ receiver: req.user._id, read: false });
+    res.json({ count });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,10 +52,15 @@ exports.getConversations = async (req, res) => {
       const otherUser = msg.sender._id.toString() === myId.toString() ? msg.receiver : msg.sender;
       if (!seen.has(otherUser._id.toString())) {
         seen.add(otherUser._id.toString());
+        
+        // Count unread from this specific user
+        const isUnread = !msg.read && msg.receiver._id.toString() === myId.toString();
+
         conversations.push({
           user: otherUser,
           lastMessage: msg.text,
-          time: msg.createdAt
+          time: msg.createdAt,
+          isUnread
         });
       }
     });

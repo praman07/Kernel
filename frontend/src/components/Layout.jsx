@@ -12,6 +12,7 @@ export default function Layout({ children }) {
   const [suggestedUsers, setSuggestedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [trends, setTrends] = useState([]);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -41,6 +42,11 @@ export default function Layout({ children }) {
       // Fetch real trends
       api.get('/projects/trends')
         .then(({ data }) => setTrends(data))
+        .catch(() => { });
+
+      // Fetch unread messages
+      api.get('/messages/unread')
+        .then(({ data }) => setUnreadMessages(data.count))
         .catch(() => { });
 
       // Onboarding check: if bio and skills are empty, and not already on onboarding page
@@ -146,8 +152,13 @@ export default function Layout({ children }) {
             <span className="hidden xl:block">Bookmarks</span>
           </Link>
 
-          <Link to="/messages" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/messages') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
-            <Terminal size={22} className={isActive('/messages') ? 'text-kernel-100' : ''} />
+          <Link to="/messages" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors relative ${isActive('/messages') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+            <div className="relative">
+              <Terminal size={22} className={isActive('/messages') ? 'text-kernel-100' : ''} />
+              {unreadMessages > 0 && (
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-kernel-950 animate-pulse" />
+              )}
+            </div>
             <span className="hidden xl:block">Messages</span>
           </Link>
 
@@ -291,6 +302,14 @@ export default function Layout({ children }) {
                 <span className="absolute -top-1 -right-1.5 min-w-[16px] h-4 bg-blue-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center px-0.5">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
+              )}
+            </div>
+          </Link>
+          <Link to="/messages" className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors relative ${isActive('/messages') ? 'text-kernel-100' : 'text-kernel-600 active:text-kernel-200'}`}>
+            <div className="relative">
+              <Terminal size={22} />
+              {unreadMessages > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-kernel-950 animate-pulse" />
               )}
             </div>
           </Link>

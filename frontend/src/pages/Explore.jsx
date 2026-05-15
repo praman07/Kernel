@@ -136,6 +136,21 @@ export default function Explore() {
         </div>
       )}
 
+      {/* Quick Filters */}
+      {!isLoading && (
+        <div className="px-4 py-2 border-b border-kernel-800 flex gap-2 overflow-x-auto no-scrollbar bg-kernel-950/50">
+          {['react', 'node', 'python', 'rust', 'nextjs', 'typescript', 'ai', 'web3'].map(stack => (
+            <button
+              key={stack}
+              onClick={() => setSearchQuery(stack)}
+              className={`px-3 py-1 font-mono text-[10px] uppercase border transition-all ${searchQuery === stack ? 'bg-blue-600 border-blue-500 text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]' : 'bg-kernel-900 border-kernel-800 text-kernel-500 hover:border-kernel-600 hover:text-kernel-300'}`}
+            >
+              {stack}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Results */}
       {!isLoading && hasSearched && (
         <div>

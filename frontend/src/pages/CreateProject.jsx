@@ -10,6 +10,7 @@ export default function CreateProject() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -177,16 +178,44 @@ export default function CreateProject() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-mono font-bold text-kernel-400 uppercase tracking-widest">README.md (Description) *</label>
-            <textarea
-              name="description"
-              required
-              rows="6"
-              className="w-full bg-kernel-900 border border-kernel-700 p-3 text-kernel-100 placeholder-kernel-600 focus:outline-none focus:border-kernel-400 font-mono transition-colors resize-none"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="# Project Title\n\nExplain what it does..."
-            />
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-xs font-mono font-bold text-kernel-400 uppercase tracking-widest">README.md (Description) *</label>
+              <div className="flex bg-kernel-900 border border-kernel-800 p-0.5 rounded-sm">
+                <button
+                  type="button"
+                  onClick={() => setIsPreview(false)}
+                  className={`px-3 py-1 font-mono text-[10px] uppercase transition-colors ${!isPreview ? 'bg-kernel-800 text-kernel-100 shadow-sm' : 'text-kernel-600 hover:text-kernel-400'}`}
+                >
+                  Write
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsPreview(true)}
+                  className={`px-3 py-1 font-mono text-[10px] uppercase transition-colors ${isPreview ? 'bg-kernel-800 text-kernel-100 shadow-sm' : 'text-kernel-600 hover:text-kernel-400'}`}
+                >
+                  Preview
+                </button>
+              </div>
+            </div>
+            {!isPreview ? (
+              <textarea
+                name="description"
+                required
+                rows="8"
+                className="w-full bg-kernel-900 border border-kernel-700 p-3 text-kernel-100 placeholder-kernel-600 focus:outline-none focus:border-kernel-400 font-mono transition-colors resize-none"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="# Project Title\n\nExplain what it does..."
+              />
+            ) : (
+              <div className="w-full bg-kernel-900 border border-kernel-700 p-4 min-h-[212px] text-kernel-200 font-mono text-sm overflow-y-auto prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-kernel-950">
+                {formData.description ? (
+                  <div className="whitespace-pre-wrap">{formData.description}</div>
+                ) : (
+                  <span className="text-kernel-700 italic">Nothing to preview...</span>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

@@ -352,14 +352,6 @@ export default function Layout({ children }) {
               )}
             </div>
           </Link>
-          <Link to="/messages" className={`flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors relative ${isActive('/messages') ? 'text-kernel-100' : 'text-kernel-600 active:text-kernel-200'}`}>
-            <div className="relative">
-              <Terminal size={22} />
-              {unreadMessages > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-kernel-950" />
-              )}
-            </div>
-          </Link>
           {/* Profile + logout menu trigger */}
           <button
             onClick={() => setShowMobileMenu(prev => !prev)}

@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import api from '../utils/api';
 import { io } from 'socket.io-client';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Send, User as UserIcon, Terminal, Trash2, ArrowLeft, Menu, X } from 'lucide-react';
+import { Send, User as UserIcon, Terminal, Trash2, ArrowLeft, Menu, X, MessageSquare } from 'lucide-react';
 import moment from 'moment';
 
 const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -141,7 +141,7 @@ export default function Messages() {
       >
         <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex justify-between items-center whitespace-nowrap overflow-hidden">
           <h2 className="text-sm font-bold text-kernel-100 flex items-center gap-2">
-            <Terminal size={14} /> CHAT_DAEMON
+            <MessageSquare size={14} className="text-blue-500" /> CHAT_DAEMON
           </h2>
         </div>
         <div className="flex-1 overflow-y-auto whitespace-nowrap">

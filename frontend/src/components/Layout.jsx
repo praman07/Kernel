@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { Terminal, Home, Compass, PlusSquare, User, Bell, LogOut, Bookmark, Search, X } from 'lucide-react';
+import { Terminal, Home, Compass, PlusSquare, User, Bell, LogOut, Bookmark, Search, X, MessageSquare } from 'lucide-react';
 import CommandPalette from './CommandPalette';
 import { io } from 'socket.io-client';
 
@@ -232,8 +232,18 @@ export default function Layout({ children }) {
         </button>
       )}
 
-      {/* Main Center Feed */}
-      <main className="flex-1 w-full sm:max-w-xl md:max-w-2xl lg:max-w-[850px] border-r border-kernel-800 pb-20 sm:pb-0 min-h-screen">
+      {/* Mobile Top Bar */}
+      <div className="sm:hidden fixed top-0 left-0 right-0 h-14 bg-kernel-950/80 backdrop-blur-md border-b border-kernel-800 z-50 flex items-center justify-between px-4">
+        <Link to="/messages" className="text-kernel-100 hover:text-blue-400 transition-colors">
+          <MessageSquare size={22} />
+        </Link>
+        <div className="flex items-center gap-2">
+          <Terminal size={18} className="text-kernel-600" />
+          <span className="font-mono font-bold tracking-tight text-kernel-100 text-sm">Kernel</span>
+        </div>
+        <div className="w-6" /> {/* Spacer */}
+      </div>
+      <main className="flex-1 w-full sm:max-w-xl md:max-w-2xl lg:max-w-[850px] border-r border-kernel-800 pt-14 sm:pt-0 pb-20 sm:pb-0 min-h-screen">
         {children}
       </main>
 

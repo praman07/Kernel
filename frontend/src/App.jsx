@@ -18,6 +18,7 @@ import Bookmarks from './pages/Bookmarks';
 import Onboarding from './pages/Onboarding';
 import EditProject from './pages/EditProject';
 import EditBlog from './pages/EditBlog';
+import Messages from './pages/Messages';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useContext(AuthContext);
@@ -50,6 +51,8 @@ function App() {
           <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
           <Route path="/edit-project/:id" element={<PrivateRoute><EditProject /></PrivateRoute>} />
           <Route path="/edit-blog/:id" element={<PrivateRoute><EditBlog /></PrivateRoute>} />
+          <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
+          <Route path="/messages/:userId" element={<PrivateRoute><Messages /></PrivateRoute>} />
         </Routes>
       </Layout>
     </Router>

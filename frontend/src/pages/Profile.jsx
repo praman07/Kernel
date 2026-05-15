@@ -308,15 +308,23 @@ export default function Profile() {
                 Edit profile
               </Link>
             ) : (
-              <button
-                onClick={handleFollow}
-                className={`px-5 py-1.5 font-bold rounded-full text-sm transition-all ${isFollowing
-                    ? 'border border-kernel-600 text-kernel-200 hover:border-red-800 hover:text-red-400 hover:bg-red-900/10'
-                    : 'bg-kernel-100 text-kernel-950 hover:bg-white'
-                  }`}
-              >
-                {isFollowing ? 'Following' : 'Follow'}
-              </button>
+              <>
+                <Link
+                  to={`/messages/${profileUser._id}`}
+                  className="px-5 py-1.5 font-bold rounded-full text-sm border border-kernel-600 text-kernel-200 hover:bg-kernel-900/30 transition-all"
+                >
+                  Message
+                </Link>
+                <button
+                  onClick={handleFollow}
+                  className={`px-5 py-1.5 font-bold rounded-full text-sm transition-all ${isFollowing
+                      ? 'border border-kernel-600 text-kernel-200 hover:border-red-800 hover:text-red-400 hover:bg-red-900/10'
+                      : 'bg-kernel-100 text-kernel-950 hover:bg-white'
+                    }`}
+                >
+                  {isFollowing ? 'Following' : 'Follow'}
+                </button>
+              </>
             )}
           </div>
         </div>

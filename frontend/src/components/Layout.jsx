@@ -146,6 +146,11 @@ export default function Layout({ children }) {
             <span className="hidden xl:block">Bookmarks</span>
           </Link>
 
+          <Link to="/messages" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/messages') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+            <Terminal size={22} className={isActive('/messages') ? 'text-kernel-100' : ''} />
+            <span className="hidden xl:block">Messages</span>
+          </Link>
+
           <Link to="/create-project" className="mt-6 flex items-center justify-center gap-2 p-3 xl:px-4 bg-kernel-200 text-kernel-950 hover:bg-white transition-colors font-bold rounded-xl shadow-hard-sm">
             <PlusSquare size={20} />
             <span className="hidden xl:block">Post</span>

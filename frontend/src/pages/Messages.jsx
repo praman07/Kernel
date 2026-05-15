@@ -15,35 +15,52 @@ export default function Messages() {
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
+  
   const socket = useRef(null);
   const messagesEndRef = useRef(null);
+  const activeChatRef = useRef(null); // Critical for real-time listener
+
+  useEffect(() => {
+    activeChatRef.current = activeChat;
+  }, [activeChat]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
+    // Initialize socket once
     socket.current = io(SOCKET_URL);
+    
     if (user) {
       socket.current.emit('register', user._id);
     }
 
     socket.current.on('receive_message', (msg) => {
-      if (activeChat && (msg.sender === activeChat._id || msg.receiver === activeChat._id)) {
+      const active = activeChatRef.current;
+      // If we are currently chatting with the sender
+      if (active && (msg.sender === active._id || msg.sender?._id === active._id)) {
         setMessages(prev => [...prev, msg]);
+        // Also hit backend to mark this specific message as read
+        api.get(`/messages/${active._id}`).catch(() => {});
       }
       fetchConversations();
     });
 
     socket.current.on('message_sent', (msg) => {
-      setMessages(prev => [...prev, msg]);
+      const active = activeChatRef.current;
+      if (active && (msg.receiver === active._id || msg.receiver?._id === active._id)) {
+        setMessages(prev => [...prev, msg]);
+      }
       fetchConversations();
     });
 
     return () => {
-      socket.current.disconnect();
+      if (socket.current) {
+        socket.current.disconnect();
+      }
     };
-  }, [user, activeChat]);
+  }, [user]); // Only re-run if user changes (e.g. login/logout)
 
   useEffect(() => {
     const initChat = async () => {
@@ -109,7 +126,6 @@ export default function Messages() {
               key={conv.user._id}
               onClick={() => {
                 setActiveChat(conv.user);
-                // Immediately clear the dot locally for better UX
                 setConversations(prev => prev.map(c => c.user._id === conv.user._id ? { ...c, isUnread: false } : c));
               }}
               className={`p-4 border-b border-kernel-800 cursor-pointer transition-colors relative ${activeChat?._id === conv.user._id ? 'bg-kernel-900 border-l-2 border-l-blue-500' : 'hover:bg-kernel-900/50'}`}
@@ -157,7 +173,7 @@ export default function Messages() {
             
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg, i) => {
-                const isMine = msg.sender === user._id || msg.sender?._id === user._id;
+                const isMine = (msg.sender === user._id || msg.sender?._id === user._id);
                 return (
                   <div key={i} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[70%] p-3 border ${isMine ? 'bg-blue-900/20 border-blue-800 text-blue-100' : 'bg-kernel-900 border-kernel-800 text-kernel-200'}`}>

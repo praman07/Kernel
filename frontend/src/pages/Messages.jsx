@@ -107,9 +107,16 @@ export default function Messages() {
           {conversations.length > 0 ? conversations.map((conv) => (
             <div
               key={conv.user._id}
-              onClick={() => setActiveChat(conv.user)}
-              className={`p-4 border-b border-kernel-800 cursor-pointer transition-colors ${activeChat?._id === conv.user._id ? 'bg-kernel-900 border-l-2 border-l-blue-500' : 'hover:bg-kernel-900/50'}`}
+              onClick={() => {
+                setActiveChat(conv.user);
+                // Immediately clear the dot locally for better UX
+                setConversations(prev => prev.map(c => c.user._id === conv.user._id ? { ...c, isUnread: false } : c));
+              }}
+              className={`p-4 border-b border-kernel-800 cursor-pointer transition-colors relative ${activeChat?._id === conv.user._id ? 'bg-kernel-900 border-l-2 border-l-blue-500' : 'hover:bg-kernel-900/50'}`}
             >
+              {conv.isUnread && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+              )}
               <div className="flex gap-3">
                 {conv.user.profilePicture ? (
                   <img src={conv.user.profilePicture} alt="" className="w-10 h-10 border border-kernel-700" />
@@ -120,10 +127,10 @@ export default function Messages() {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs font-bold text-kernel-100 truncate">{conv.user.name}</span>
+                    <span className={`text-xs truncate ${conv.isUnread ? 'font-bold text-kernel-100' : 'text-kernel-300'}`}>{conv.user.name}</span>
                     <span className="text-[10px] text-kernel-600">{moment(conv.time).fromNow(true)}</span>
                   </div>
-                  <p className="text-[10px] text-kernel-500 truncate">{conv.lastMessage}</p>
+                  <p className={`text-[10px] truncate ${conv.isUnread ? 'text-kernel-100 font-medium' : 'text-kernel-500'}`}>{conv.lastMessage}</p>
                 </div>
               </div>
             </div>

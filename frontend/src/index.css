@@ -10,7 +10,7 @@
 @config "../tailwind.config.js";
 
 html {
-  font-size: 125%;
+  font-size: 100%;
 }
 
 @layer base {

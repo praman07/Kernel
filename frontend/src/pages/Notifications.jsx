@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import { Heart, MessageCircle, UserPlus, Bookmark, Bell } from 'lucide-react';
+import { Heart, MessageCircle, UserPlus, Bookmark, Bell, ArrowLeft } from 'lucide-react';
 
 const TYPE_MAP = {
   LIKE_PROJECT:    { Icon: Heart,          color: 'text-pink-500',    bg: 'bg-pink-500/10',    verb: 'liked your project' },
@@ -17,6 +17,7 @@ const TYPE_MAP = {
 
 export default function Notifications() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -39,7 +40,10 @@ export default function Notifications() {
 
   if (isLoading) return (
     <div className="w-full min-h-screen bg-kernel-950">
-      <div className="sticky top-0 z-40 bg-kernel-950/90 backdrop-blur-md border-b border-kernel-800 px-4 py-3.5">
+      <div className="sticky top-0 z-40 bg-kernel-950/90 backdrop-blur-md border-b border-kernel-800 px-4 py-3.5 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer shrink-0">
+          <ArrowLeft size={14} /> cd ..
+        </button>
         <h1 className="font-bold text-kernel-100 text-base">Notifications</h1>
       </div>
       <div className="divide-y divide-kernel-800 animate-pulse">
@@ -58,7 +62,10 @@ export default function Notifications() {
 
   return (
     <div className="w-full min-h-screen bg-kernel-950">
-      <div className="sticky top-0 z-40 bg-kernel-950/90 backdrop-blur-md border-b border-kernel-800 px-4 py-3.5">
+      <div className="sticky top-0 z-40 bg-kernel-950/90 backdrop-blur-md border-b border-kernel-800 px-4 py-3.5 flex items-center gap-3">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer shrink-0">
+          <ArrowLeft size={14} /> cd ..
+        </button>
         <h1 className="font-bold text-kernel-100 text-base">Notifications</h1>
       </div>
 

@@ -26,39 +26,39 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[75vh] bg-dot-pattern px-4">
+    <div className="flex items-center justify-center min-h-[85vh] bg-dot-pattern px-4 py-12">
       <Toaster position="top-right" />
       
-      <div className="w-full max-w-sm bg-kernel-950 border border-kernel-800 shadow-hard relative">
-        <div className="absolute -top-3 -left-3 w-6 h-6 border border-kernel-800 bg-kernel-900 flex items-center justify-center">
-          <Terminal size={12} className="text-kernel-500" />
+      <div className="w-full max-w-md bg-kernel-950 border-2 border-kernel-600 shadow-2xl relative rounded-xl">
+        <div className="absolute -top-3.5 -left-3.5 w-8 h-8 border border-kernel-600 bg-kernel-900 flex items-center justify-center rounded-md shadow-md">
+          <Terminal size={16} className="text-blue-400" />
         </div>
         
-        <div className="p-8">
+        <div className="p-8 sm:p-10">
           <div className="mb-8">
-            <h2 className="text-xl font-mono font-bold text-kernel-100 tracking-tight">/auth/login</h2>
-            <p className="text-kernel-500 font-mono text-xs mt-1">Authenticate to access the network.</p>
+            <h2 className="text-2xl font-mono font-bold text-white tracking-tight">/auth/login</h2>
+            <p className="text-kernel-400 font-mono text-sm mt-1.5">Authenticate to access the network.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono font-bold text-kernel-400 uppercase tracking-widest">Email</label>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-xs font-mono font-bold text-kernel-300 uppercase tracking-widest">Email</label>
               <input
                 type="email"
                 required
-                className="w-full bg-kernel-900 border border-kernel-800 p-2.5 text-kernel-100 placeholder-kernel-700 focus:outline-none focus:border-kernel-500 font-mono text-sm transition-colors"
+                className="w-full bg-kernel-900 border border-kernel-700 focus:border-blue-500 p-3 text-white placeholder-kernel-500 focus:outline-none font-mono text-base transition-colors rounded-lg"
                 placeholder="user@domain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-mono font-bold text-kernel-400 uppercase tracking-widest">Password</label>
+            <div className="space-y-2">
+              <label className="text-xs font-mono font-bold text-kernel-300 uppercase tracking-widest">Password</label>
               <input
                 type="password"
                 required
-                className="w-full bg-kernel-900 border border-kernel-800 p-2.5 text-kernel-100 placeholder-kernel-700 focus:outline-none focus:border-kernel-500 font-mono text-sm transition-colors"
+                className="w-full bg-kernel-900 border border-kernel-700 focus:border-blue-500 p-3 text-white placeholder-kernel-500 focus:outline-none font-mono text-base transition-colors rounded-lg"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -68,16 +68,16 @@ export default function Login() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-4 bg-kernel-200 hover:bg-white text-kernel-950 font-mono font-bold text-sm py-2.5 shadow-hard-sm transition-colors disabled:opacity-50"
+              className="w-full mt-6 bg-white hover:bg-zinc-200 text-kernel-950 font-mono font-bold text-base py-3 shadow-md transition-all rounded-lg cursor-pointer disabled:opacity-50"
             >
               {isLoading ? 'authenticating...' : 'execute'}
             </button>
           </form>
 
-          <div className="mt-8 pt-4 border-t border-kernel-800 text-center">
-            <p className="font-mono text-xs text-kernel-500">
+          <div className="mt-8 pt-5 border-t border-kernel-800 text-center">
+            <p className="font-mono text-sm text-kernel-400">
               No access credentials?{' '}
-              <Link to="/signup" className="text-kernel-300 hover:text-white hover:underline transition-colors">
+              <Link to="/signup" className="text-white hover:text-blue-400 font-bold underline transition-colors">
                 init_account
               </Link>
             </p>

@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { Code2, ExternalLink, ArrowLeft, Trash2, Edit3, TerminalSquare, Clock } from 'lucide-react';
+import { Code2, ExternalLink, ArrowLeft, Trash2, Edit3, TerminalSquare, Clock, Share2 } from 'lucide-react';
 import TextWithHashtags from '../components/TextWithHashtags';
 import moment from 'moment';
 import toast, { Toaster } from 'react-hot-toast';
@@ -63,19 +63,32 @@ export default function ProjectDetails() {
       <Toaster position="top-right" />
 
       <div className="mb-6 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 font-mono text-xs text-kernel-500 hover:text-kernel-300 transition-colors cursor-pointer bg-transparent border-none">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer">
           <ArrowLeft size={14} /> cd ..
         </button>
-        {isOwner && (
-          <div className="flex items-center gap-2">
-            <Link to={`/edit-project/${id}`} className="font-mono text-xs text-blue-500 hover:bg-blue-500/10 px-2 py-1 transition-colors flex items-center gap-2">
-              <Edit3 size={12} /> edit
-            </Link>
-            <button onClick={handleDelete} className="font-mono text-xs text-red-500 hover:bg-red-500/10 px-2 py-1 transition-colors flex items-center gap-2 bg-transparent border-none cursor-pointer">
-              <Trash2 size={12} /> rm -rf
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Project link copied to clipboard!');
+              }
+            }} 
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-kernel-900 hover:bg-kernel-800 text-zinc-300 hover:text-white font-mono text-xs font-bold rounded-md border border-kernel-700 shadow-sm cursor-pointer transition-colors"
+          >
+            <Share2 size={13} /> share
+          </button>
+          {isOwner && (
+            <div className="flex items-center gap-2">
+              <Link to={`/edit-project/${id}`} className="font-mono text-xs text-blue-500 hover:bg-blue-500/10 px-2 py-1 transition-colors flex items-center gap-2">
+                <Edit3 size={12} /> edit
+              </Link>
+              <button onClick={handleDelete} className="font-mono text-xs text-red-500 hover:bg-red-500/10 px-2 py-1 transition-colors flex items-center gap-2 bg-transparent border-none cursor-pointer">
+                <Trash2 size={12} /> rm -rf
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="bg-kernel-950 border border-kernel-800 shadow-hard">
@@ -145,25 +158,36 @@ export default function ProjectDetails() {
         <div className="p-6 md:p-8 border-t border-kernel-800 bg-kernel-950">
           <h3 className="font-mono text-xs font-bold text-kernel-500 uppercase tracking-widest mb-6">Discussion</h3>
 
-          <form onSubmit={submitComment} className="flex gap-3 mb-8">
-            {user?.profilePicture ? (
-              <img src={user.profilePicture} alt="You" className="w-8 h-8 object-cover border border-kernel-700 shrink-0" />
-            ) : (
-              <div className="w-8 h-8 bg-kernel-900 border border-kernel-700 flex items-center justify-center font-mono text-xs text-kernel-400 shrink-0">
-                {user?.name?.charAt(0) || '?'}
+          {user ? (
+            <form onSubmit={submitComment} className="flex gap-3 mb-8">
+              {user?.profilePicture ? (
+                <img src={user.profilePicture} alt="You" className="w-8 h-8 object-cover border border-kernel-700 shrink-0" />
+              ) : (
+                <div className="w-8 h-8 bg-kernel-800 border border-kernel-700 flex items-center justify-center font-mono text-xs text-kernel-300 shrink-0">
+                  {user?.name?.charAt(0) || 'U'}
+                </div>
+              )}
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Add to discussion..."
+                  className="flex-1 bg-kernel-900 border border-kernel-800 p-2 text-kernel-100 text-sm font-mono focus:outline-none focus:border-kernel-600 transition-colors"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
+                <button type="submit" disabled={!commentText.trim()} className="px-4 py-2 bg-kernel-200 hover:bg-white text-kernel-950 font-mono font-bold text-xs shadow-hard-sm transition-colors cursor-pointer disabled:opacity-50">
+                  comment
+                </button>
               </div>
-            )}
-            <input
-              type="text"
-              placeholder="Leave a comment..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              className="flex-1 bg-transparent border-b border-kernel-700 focus:border-blue-500 outline-none text-kernel-100 text-sm font-mono pb-2 transition-colors placeholder-kernel-600"
-            />
-            <button type="submit" disabled={!commentText.trim()} className="px-4 py-1 text-xs font-mono font-bold bg-kernel-100 text-kernel-950 hover:bg-white disabled:opacity-50 transition-colors h-8 shadow-hard-sm">
-              Submit
-            </button>
-          </form>
+            </form>
+          ) : (
+            <div className="p-4 mb-8 bg-kernel-900 border border-kernel-800 flex items-center justify-between font-mono text-xs text-kernel-400">
+              <span>Login to join the discussion.</span>
+              <Link to="/login" className="px-3 py-1.5 bg-white text-kernel-950 font-bold hover:bg-zinc-200 transition-colors">
+                login
+              </Link>
+            </div>
+          )}
 
           <div className="space-y-6">
             {project.comments?.map((comment, index) => (

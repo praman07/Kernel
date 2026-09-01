@@ -164,29 +164,94 @@ const addCommentProject = async (req, res) => {
   }
 };
 
+const CATEGORY_MAP = {
+  react: 'Frontend',
+  nextjs: 'Frontend',
+  vue: 'Frontend',
+  angular: 'Frontend',
+  tailwind: 'Styling',
+  gsap: 'Animation',
+  node: 'Backend',
+  express: 'Backend',
+  python: 'AI / Data',
+  fastapi: 'Backend',
+  django: 'Backend',
+  rust: 'Systems',
+  go: 'Backend',
+  golang: 'Backend',
+  typescript: 'Language',
+  javascript: 'Language',
+  cpp: 'Language',
+  c: 'Language',
+  sheryians: 'Education',
+  mern: 'Fullstack',
+  indiehackers: 'Business',
+  web3: 'Crypto',
+  ai: 'Artificial Intelligence',
+  ml: 'Machine Learning',
+  devops: 'Infrastructure',
+  docker: 'Container',
+  kubernetes: 'Infrastructure'
+};
+
 const getTrends = async (req, res) => {
   try {
-    const [projects, blogs] = await Promise.all([
-      Project.find({}, 'tags'),
-      Blog.find({}, 'tags')
+    const pipeline = [
+      { $unwind: '$tags' },
+      {
+        $project: {
+          cleanTag: {
+            $toLower: {
+              $trim: {
+                input: {
+                  $replaceAll: { input: '$tags', find: '#', replacement: '' }
+                }
+              }
+            }
+          }
+        }
+      },
+      { $match: { cleanTag: { $ne: '' } } },
+      { $group: { _id: '$cleanTag', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 15 }
+    ];
+
+    const [projectTags, blogTags] = await Promise.all([
+      Project.aggregate(pipeline),
+      Blog.aggregate(pipeline)
     ]);
 
     const tagCounts = {};
-    [...projects, ...blogs].forEach(item => {
-      item.tags?.forEach(tag => {
-        const normalized = tag.toLowerCase().trim();
-        if (normalized) {
-          tagCounts[normalized] = (tagCounts[normalized] || 0) + 1;
-        }
-      });
+    [...projectTags, ...blogTags].forEach(item => {
+      if (item._id) {
+        tagCounts[item._id] = (tagCounts[item._id] || 0) + item.count;
+      }
     });
 
-    const sortedTags = Object.entries(tagCounts)
-      .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
+    // Default tech tags if database has few tags yet
+    const fallbackTags = ['sheryians', 'mern', 'typescript', 'nextjs', 'react', 'python', 'rust', 'indiehackers', 'gsap', 'web3'];
+    fallbackTags.forEach(tag => {
+      if (!tagCounts[tag]) {
+        tagCounts[tag] = Math.floor(Math.random() * 3) + 1;
+      }
+    });
 
-    res.json(sortedTags);
+    const sortedTrends = Object.entries(tagCounts)
+      .map(([tag, count]) => {
+        const category = CATEGORY_MAP[tag] || 'Tech';
+        let postsFormatted = count >= 1000 ? `${(count / 1000).toFixed(1)}k` : `${count}`;
+        return {
+          tag,
+          category,
+          count,
+          posts: postsFormatted
+        };
+      })
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+
+    res.json(sortedTrends);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

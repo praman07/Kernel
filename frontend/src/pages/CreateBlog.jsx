@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
-import { FileText, Hash, Link as LinkIcon } from 'lucide-react';
+import { FileText, Hash, Link as LinkIcon, ArrowLeft } from 'lucide-react';
 
 export default function CreateBlog() {
   const { user } = useContext(AuthContext);
@@ -47,12 +47,17 @@ export default function CreateBlog() {
     <div className="max-w-4xl mx-auto py-8">
       <Toaster position="top-right" />
       
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-kernel-100 font-mono tracking-tight flex items-center gap-2">
-          <FileText className="text-kernel-500" />
-          write_journal
-        </h1>
-        <p className="text-kernel-500 font-mono text-xs mt-2">Publish raw engineering thoughts, tutorials, or updates.</p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-kernel-100 font-mono tracking-tight flex items-center gap-2">
+            <FileText className="text-kernel-500" />
+            write_journal
+          </h1>
+          <p className="text-kernel-500 font-mono text-xs mt-2">Publish raw engineering thoughts, tutorials, or updates.</p>
+        </div>
+        <button type="button" onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer shrink-0">
+          <ArrowLeft size={14} /> cd ..
+        </button>
       </div>
 
       <div className="bg-kernel-950 border border-kernel-800 shadow-hard p-1">

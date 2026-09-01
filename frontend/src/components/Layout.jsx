@@ -122,19 +122,19 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-kernel-950 flex justify-center">
+    <div className="min-h-screen bg-kernel-950 flex justify-center w-full max-w-[1440px] mx-auto">
 
       {/* Desktop Left Sidebar */}
-      <aside className={`hidden sm:flex flex-col border-r border-kernel-800 sticky top-0 h-screen overflow-y-auto px-2 py-6 transition-all duration-300 ease-in-out ${isMainSidebarOpen ? 'w-20 xl:w-80 xl:px-4' : 'w-0 border-none px-0'}`}>
-        <div className={isMainSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}>
-          <div className="flex items-center justify-between mb-8 px-2 xl:px-4">
-            <Link to="/feed" className="flex items-center gap-4 group">
-              <div className="w-8 h-8 border-2 border-kernel-600 flex items-center justify-center bg-kernel-900 group-hover:bg-kernel-800 transition-colors shrink-0 shadow-hard-sm">
-                <Terminal size={16} className="text-kernel-300" />
+      <aside className={`hidden sm:flex flex-col border-r border-kernel-700/60 sticky top-0 h-screen overflow-y-auto px-2 py-4 transition-all duration-300 ease-in-out ${isMainSidebarOpen ? 'w-20 xl:w-64' : 'w-0 border-none px-0'}`}>
+        <div className={isMainSidebarOpen ? 'opacity-100 flex flex-col h-full' : 'opacity-0 pointer-events-none'}>
+          <div className="flex items-center justify-between mb-4 px-3">
+            <Link to="/feed" className="flex items-center gap-3 group p-2 hover:bg-kernel-900 rounded-full transition-colors">
+              <div className="w-9 h-9 border border-kernel-600 rounded-full flex items-center justify-center bg-kernel-900 group-hover:bg-kernel-800 transition-colors shrink-0 shadow-hard-sm">
+                <Terminal size={18} className="text-white" />
               </div>
-              <span className="font-mono font-bold tracking-tight text-kernel-100 text-xl hidden xl:block">Kernel</span>
+              <span className="font-mono font-bold tracking-tight text-white text-xl hidden xl:block">Kernel</span>
             </Link>
-            <button onClick={() => setIsMainSidebarOpen(false)} className="hidden xl:block text-kernel-600 hover:text-kernel-100 p-1">
+            <button onClick={() => setIsMainSidebarOpen(false)} className="hidden xl:block text-kernel-400 hover:text-white p-1 rounded-full hover:bg-kernel-900">
               <X size={18} />
             </button>
           </div>
@@ -142,25 +142,25 @@ export default function Layout({ children }) {
         {/* Quick Search Shortcut */}
         <button
           onClick={() => setIsCommandPaletteOpen(true)}
-          className="hidden xl:flex items-center justify-between mb-6 px-3 py-2 bg-kernel-900/50 border border-kernel-800 hover:border-kernel-700 transition-colors rounded-xl text-kernel-500 hover:text-kernel-300 group"
+          className="hidden xl:flex items-center justify-between mb-4 mx-1 px-3 py-2 bg-kernel-900 border border-kernel-800 hover:border-kernel-700 transition-colors rounded-full text-kernel-400 hover:text-kernel-200 group"
         >
           <div className="flex items-center gap-2">
             <Search size={14} />
-            <span className="font-mono text-[10px]">search_commands...</span>
+            <span className="font-mono text-xs">Search...</span>
           </div>
-          <span className="font-mono text-[10px] bg-kernel-800 px-1 rounded">⌘K</span>
+          <span className="font-mono text-[10px] bg-kernel-800 px-1.5 py-0.5 rounded text-kernel-400">⌘K</span>
         </button>
 
-        <nav className="flex flex-col gap-2 font-mono text-sm flex-1">
-          <Link to="/feed" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/feed') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+        <nav className="flex flex-col gap-1 font-mono text-sm">
+          <Link to="/feed" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors ${isActive('/feed') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <Home size={22} className={isActive('/feed') ? 'text-kernel-100' : ''} />
             <span className="hidden xl:block">Home</span>
           </Link>
-          <Link to="/explore" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/explore') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+          <Link to="/explore" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors ${isActive('/explore') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <Compass size={22} className={isActive('/explore') ? 'text-kernel-100' : ''} />
             <span className="hidden xl:block">Explore</span>
           </Link>
-          <Link to="/notifications" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors relative ${isActive('/notifications') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+          <Link to="/notifications" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors relative ${isActive('/notifications') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <div className="relative">
               <Bell size={22} className={isActive('/notifications') ? 'text-kernel-100' : ''} />
               {unreadCount > 0 && (
@@ -171,17 +171,17 @@ export default function Layout({ children }) {
             </div>
             <span className="hidden xl:block">Notifications</span>
           </Link>
-          <Link to="/profile" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/profile') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+          <Link to="/profile" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors ${isActive('/profile') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <User size={22} className={isActive('/profile') ? 'text-kernel-100' : ''} />
             <span className="hidden xl:block">Profile</span>
           </Link>
 
-          <Link to="/bookmarks" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors ${isActive('/bookmarks') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+          <Link to="/bookmarks" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors ${isActive('/bookmarks') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <Bookmark size={22} className={isActive('/bookmarks') ? 'text-kernel-100' : ''} />
             <span className="hidden xl:block">Bookmarks</span>
           </Link>
 
-          <Link to="/messages" className={`flex items-center gap-4 p-3 xl:px-4 rounded-xl transition-colors relative ${isActive('/messages') ? 'font-bold text-kernel-100' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-200'}`}>
+          <Link to="/messages" className={`flex items-center gap-4 px-4 py-3 rounded-full transition-colors relative ${isActive('/messages') ? 'font-bold text-kernel-100 bg-kernel-900/60' : 'text-kernel-400 hover:bg-kernel-900 hover:text-kernel-100'}`}>
             <div className="relative">
               <Terminal size={22} className={isActive('/messages') ? 'text-kernel-100' : ''} />
               {unreadMessages > 0 && (
@@ -191,19 +191,19 @@ export default function Layout({ children }) {
             <span className="hidden xl:block">Messages</span>
           </Link>
 
-          <Link to="/create-project" className="mt-6 flex items-center justify-center gap-2 p-3 xl:px-4 bg-kernel-200 text-kernel-950 hover:bg-white transition-colors font-bold rounded-xl shadow-hard-sm">
-            <PlusSquare size={20} />
-            <span className="hidden xl:block">Post</span>
+          <Link to="/create-project" className="mt-4 flex items-center justify-center gap-2 py-3 px-4 bg-kernel-100 text-kernel-950 hover:bg-white transition-colors font-bold rounded-full shadow-hard-sm">
+            <PlusSquare size={18} />
+            <span className="hidden xl:block font-mono text-sm">Post</span>
           </Link>
         </nav>
 
         {/* User Mini Profile & Logout at Bottom */}
         <div className="mt-auto pt-4 border-t border-kernel-800 flex flex-col gap-2">
-          <Link to="/profile" className="flex items-center gap-3 px-2 xl:px-4 cursor-pointer hover:bg-kernel-900 p-2 rounded-xl transition-colors">
+          <Link to="/profile" className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-kernel-900 rounded-full transition-colors">
             {user.profilePicture ? (
-              <img src={user.profilePicture} alt="Profile" className="w-10 h-10 object-cover shrink-0 border border-kernel-700" />
+              <img src={user.profilePicture} alt="Profile" className="w-9 h-9 rounded-full object-cover shrink-0 border border-kernel-700" />
             ) : (
-              <div className="w-10 h-10 shrink-0 bg-kernel-800 border border-kernel-700 flex items-center justify-center font-mono text-xs text-kernel-300">
+              <div className="w-9 h-9 rounded-full shrink-0 bg-kernel-800 border border-kernel-700 flex items-center justify-center font-mono text-xs font-bold text-kernel-300">
                 {user.name.charAt(0)}
               </div>
             )}
@@ -212,11 +212,11 @@ export default function Layout({ children }) {
               <span className="text-xs text-kernel-500 font-mono truncate">@{user.name.toLowerCase().replace(/\s+/g, '_')}</span>
             </div>
           </Link>
-          <button onClick={logout} className="flex items-center gap-4 px-2 xl:px-4 cursor-pointer hover:bg-red-900/20 text-kernel-400 hover:text-red-500 p-2 rounded-xl transition-colors w-full text-left">
-            <div className="w-10 h-10 shrink-0 flex items-center justify-center xl:justify-start xl:w-auto xl:h-auto">
-              <LogOut size={20} />
+          <button onClick={logout} className="flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-red-900/20 text-kernel-400 hover:text-red-400 rounded-full transition-colors w-full text-left">
+            <div className="w-9 h-9 shrink-0 flex items-center justify-center">
+              <LogOut size={18} />
             </div>
-            <span className="hidden xl:block text-sm font-bold">Logout</span>
+            <span className="hidden xl:block text-sm font-bold font-mono">Logout</span>
           </button>
         </div>
       </div>
@@ -226,7 +226,7 @@ export default function Layout({ children }) {
       {!isMainSidebarOpen && (
         <button 
           onClick={() => setIsMainSidebarOpen(true)}
-          className="hidden sm:flex fixed top-4 left-4 z-50 p-2 bg-kernel-900 border border-kernel-800 text-kernel-400 hover:text-kernel-100 transition-all shadow-hard-sm"
+          className="hidden sm:flex fixed top-4 left-4 z-50 p-2 bg-kernel-900 border border-kernel-800 text-kernel-400 hover:text-kernel-100 transition-all rounded-full shadow-hard-sm"
         >
           <Terminal size={20} />
         </button>
@@ -243,19 +243,20 @@ export default function Layout({ children }) {
         </div>
         <div className="w-6" /> {/* Spacer */}
       </div>
-      <main className="flex-1 w-full sm:max-w-xl md:max-w-2xl lg:max-w-[850px] border-r border-kernel-800 pt-14 sm:pt-0 pb-20 sm:pb-0 min-h-screen">
+
+      <main className="flex-1 w-full border-r border-kernel-700/60 pt-14 sm:pt-0 pb-20 sm:pb-0 min-h-screen">
         {children}
       </main>
 
       {/* Desktop Right Sidebar */}
-      <aside className="hidden lg:block w-[420px] p-6 sticky top-0 h-screen overflow-y-auto">
+      <aside className="hidden lg:block w-[320px] xl:w-[360px] p-3 sticky top-0 h-screen overflow-y-auto">
         {/* Search */}
-        <div className="flex items-center gap-2 bg-kernel-900 border border-kernel-800 focus-within:border-kernel-600 px-3 py-2 mb-6 transition-colors">
-          <Compass size={14} className="text-kernel-600 shrink-0" />
+        <div className="flex items-center gap-3 bg-kernel-900 border border-kernel-800 focus-within:border-kernel-600 rounded-full px-4 py-2.5 mb-4 transition-colors">
+          <Search size={16} className="text-kernel-500 shrink-0" />
           <input
             type="text"
-            placeholder="Search... (Enter)"
-            className="bg-transparent text-kernel-100 focus:outline-none font-mono text-sm w-full placeholder-kernel-600"
+            placeholder="Search Kernel..."
+            className="bg-transparent text-kernel-100 focus:outline-none font-mono text-sm w-full placeholder-kernel-500"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             onKeyDown={handleSearch}
@@ -264,29 +265,29 @@ export default function Layout({ children }) {
 
         {/* Who to follow */}
         {suggestedUsers.length > 0 && (
-          <div className="mb-6">
-            <h3 className="font-mono text-[10px] font-bold text-kernel-500 uppercase tracking-widest mb-3">Who to follow</h3>
+          <div className="mb-4 bg-kernel-900/40 border border-kernel-800 rounded-2xl p-4">
+            <h3 className="font-mono text-xs font-bold text-kernel-100 tracking-wider mb-3">Who to follow</h3>
             <div className="space-y-3">
               {suggestedUsers.map(dev => (
-                <div key={dev._id} className="flex items-center gap-2">
-                  <Link to={`/profile/${dev._id}`} className="flex items-center gap-2 flex-1 overflow-hidden group">
+                <div key={dev._id} className="flex items-center gap-3">
+                  <Link to={`/profile/${dev._id}`} className="flex items-center gap-2.5 flex-1 overflow-hidden group">
                     {dev.profilePicture ? (
-                      <img src={dev.profilePicture} alt="" className="w-8 h-8 rounded-full object-cover shrink-0 border border-kernel-700" />
+                      <img src={dev.profilePicture} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 border border-kernel-700" />
                     ) : (
-                      <div className="w-8 h-8 rounded-full shrink-0 bg-kernel-800 border border-kernel-700 flex items-center justify-center font-mono text-xs font-bold text-kernel-300">
+                      <div className="w-9 h-9 rounded-full shrink-0 bg-kernel-800 border border-kernel-700 flex items-center justify-center font-mono text-xs font-bold text-kernel-300">
                         {dev.name.charAt(0).toUpperCase()}
                       </div>
                     )}
                     <div className="truncate flex-1">
-                      <div className="flex items-center gap-1.5 truncate">
+                      <div className="flex items-center gap-1 truncate">
                         <p className="font-bold text-kernel-100 text-sm truncate group-hover:underline">{dev.name}</p>
                       </div>
-                      <p className="font-mono text-[10px] text-kernel-600 truncate">@{dev.name.toLowerCase().replace(/\s+/g, '_')}</p>
+                      <p className="font-mono text-xs text-kernel-500 truncate">@{dev.name.toLowerCase().replace(/\s+/g, '_')}</p>
                     </div>
                   </Link>
                   <button
                     onClick={() => handleFollow(dev._id)}
-                    className="shrink-0 px-2.5 py-1 bg-kernel-100 text-kernel-950 text-[11px] font-mono font-bold hover:bg-white transition-colors rounded-full"
+                    className="shrink-0 px-3 py-1.5 bg-kernel-100 text-kernel-950 text-xs font-mono font-bold hover:bg-white transition-colors rounded-full"
                   >
                     Follow
                   </button>
@@ -298,32 +299,30 @@ export default function Layout({ children }) {
 
         {/* Trending tags */}
         {trends.length > 0 && (
-          <div className="mb-6">
-            <h3 className="font-mono text-[10px] font-bold text-kernel-500 uppercase tracking-widest mb-3">Trending</h3>
-            <div className="space-y-2">
+          <div className="mb-4 bg-kernel-900/40 border border-kernel-800 rounded-2xl p-4">
+            <h3 className="font-mono text-xs font-bold text-kernel-100 tracking-wider mb-3">Trends for you</h3>
+            <div className="divide-y divide-kernel-800/50">
               {trends.map(({ tag, count }, index) => (
                 <Link
                   key={tag}
                   to={`/explore?q=${tag}`}
-                  className="flex items-center justify-between px-3 py-2 hover:bg-kernel-900 transition-colors group"
+                  className="block py-2.5 hover:bg-kernel-900/50 -mx-4 px-4 transition-colors group"
                 >
-                  <div>
-                    <p className="font-mono text-[11px] text-kernel-600 mb-0.5">{index + 1} · trending</p>
-                    <p className="font-bold text-kernel-100 text-sm group-hover:text-blue-400">#{tag}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-mono text-[10px] text-kernel-600 uppercase">{count} items</p>
-                  </div>
+                  <p className="font-mono text-[11px] text-kernel-500 mb-0.5">Trending · #{index + 1}</p>
+                  <p className="font-bold text-kernel-100 text-sm group-hover:underline">#{tag}</p>
+                  <p className="font-mono text-[11px] text-kernel-500 mt-0.5">{count} posts</p>
                 </Link>
               ))}
             </div>
           </div>
         )}
 
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-mono text-kernel-700">
+        <div className="px-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-mono text-kernel-600">
           <span>© 2026 Kernel</span>
           <span>·</span>
-          <span>Built for developers</span>
+          <span>Terms</span>
+          <span>·</span>
+          <span>Privacy</span>
         </div>
       </aside>
 

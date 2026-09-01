@@ -37,6 +37,10 @@ function App() {
           <Route path="/login" element={user ? <Navigate to="/feed" /> : <Login />} />
           <Route path="/signup" element={user ? <Navigate to="/feed" /> : <Signup />} />
           
+          {/* Publicly accessible shared post routes */}
+          <Route path="/project/:id" element={<ProjectDetails />} />
+          <Route path="/blog/:id" element={<BlogDetails />} />
+
           <Route path="/feed" element={<PrivateRoute><Feed /></PrivateRoute>} />
           <Route path="/explore" element={<PrivateRoute><Explore /></PrivateRoute>} />
           <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
@@ -45,8 +49,6 @@ function App() {
           <Route path="/profile/edit" element={<PrivateRoute><EditProfile /></PrivateRoute>} />
           <Route path="/create-project" element={<PrivateRoute><CreateProject /></PrivateRoute>} />
           <Route path="/create-blog" element={<PrivateRoute><CreateBlog /></PrivateRoute>} />
-          <Route path="/project/:id" element={<PrivateRoute><ProjectDetails /></PrivateRoute>} />
-          <Route path="/blog/:id" element={<PrivateRoute><BlogDetails /></PrivateRoute>} />
           <Route path="/bookmarks" element={<PrivateRoute><Bookmarks /></PrivateRoute>} />
           <Route path="/onboarding" element={<PrivateRoute><Onboarding /></PrivateRoute>} />
           <Route path="/edit-project/:id" element={<PrivateRoute><EditProject /></PrivateRoute>} />

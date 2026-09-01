@@ -55,8 +55,8 @@ export default function Bookmarks() {
     <div className="w-full min-h-screen bg-kernel-950">
       {/* Header */}
       <div className="sticky top-0 z-40 bg-kernel-950/80 backdrop-blur-md border-b border-kernel-800 px-4 py-3 flex items-center gap-4">
-        <button onClick={() => navigate(-1)} className="text-kernel-400 hover:text-kernel-100 transition-colors p-1.5 hover:bg-kernel-900 rounded flex items-center gap-1.5 font-mono text-xs">
-          <span className="text-blue-500">$</span> cd ..
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer">
+          <ArrowLeft size={14} /> cd ..
         </button>
         <div className="flex items-center gap-2">
           <Bookmark size={18} className="text-kernel-400" />

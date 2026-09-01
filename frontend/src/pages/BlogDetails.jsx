@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { ArrowLeft, Trash2, Edit3, FileText, Clock } from 'lucide-react';
+import { ArrowLeft, Trash2, Edit3, FileText, Clock, Share2 } from 'lucide-react';
 import TextWithHashtags from '../components/TextWithHashtags';
 import moment from 'moment';
 import toast, { Toaster } from 'react-hot-toast';
@@ -62,19 +62,32 @@ export default function BlogDetails() {
     <div className="max-w-3xl mx-auto py-8">
       <Toaster position="top-right" />
       <div className="mb-8 flex items-center justify-between">
-        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-2 font-mono text-xs text-kernel-500 hover:text-kernel-300 transition-colors cursor-pointer bg-transparent border-none">
+        <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer">
           <ArrowLeft size={14} /> cd ..
         </button>
-        {isOwner && (
-          <div className="flex items-center gap-2">
-            <Link to={`/edit-blog/${id}`} className="font-mono text-xs text-blue-500 hover:bg-blue-500/10 px-2 py-1 transition-colors flex items-center gap-2">
-              <Edit3 size={12} /> edit
-            </Link>
-            <button onClick={handleDelete} className="font-mono text-xs text-red-500 hover:bg-red-500/10 px-2 py-1 transition-colors flex items-center gap-2 bg-transparent border-none cursor-pointer">
-              <Trash2 size={12} /> rm
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          <button 
+            onClick={() => {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Journal link copied to clipboard!');
+              }
+            }} 
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-kernel-900 hover:bg-kernel-800 text-zinc-300 hover:text-white font-mono text-xs font-bold rounded-md border border-kernel-700 shadow-sm cursor-pointer transition-colors"
+          >
+            <Share2 size={13} /> share
+          </button>
+          {isOwner && (
+            <div className="flex items-center gap-2">
+              <Link to={`/edit-blog/${id}`} className="font-mono text-xs text-blue-500 hover:bg-blue-500/10 px-2 py-1 transition-colors flex items-center gap-2">
+                <Edit3 size={12} /> edit
+              </Link>
+              <button onClick={handleDelete} className="font-mono text-xs text-red-500 hover:bg-red-500/10 px-2 py-1 transition-colors flex items-center gap-2 bg-transparent border-none cursor-pointer">
+                <Trash2 size={12} /> rm
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <article className="bg-kernel-950 border border-kernel-800 shadow-hard p-6 md:p-12">
@@ -129,25 +142,34 @@ export default function BlogDetails() {
       <div className="p-6 md:p-8 border border-kernel-800 bg-kernel-950 mt-6">
         <h3 className="font-mono text-xs font-bold text-kernel-500 uppercase tracking-widest mb-6">Discussion</h3>
         
-        <form onSubmit={submitComment} className="flex gap-3 mb-8">
-          {user?.profilePicture ? (
-            <img src={user.profilePicture} alt="You" className="w-8 h-8 object-cover border border-kernel-700 shrink-0" />
-          ) : (
-            <div className="w-8 h-8 bg-kernel-900 border border-kernel-700 flex items-center justify-center font-mono text-xs text-kernel-400 shrink-0">
-              {user?.name?.charAt(0) || '?'}
-            </div>
-          )}
-          <input 
-            type="text" 
-            placeholder="Leave a comment..." 
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="flex-1 bg-transparent border-b border-kernel-700 focus:border-blue-500 outline-none text-kernel-100 text-sm font-mono pb-2 transition-colors placeholder-kernel-600"
-          />
-          <button type="submit" disabled={!commentText.trim()} className="px-4 py-1 text-xs font-mono font-bold bg-kernel-100 text-kernel-950 hover:bg-white disabled:opacity-50 transition-colors h-8 shadow-hard-sm">
-            Submit
-          </button>
-        </form>
+        {user ? (
+          <form onSubmit={submitComment} className="flex gap-3 mb-8">
+            {user?.profilePicture ? (
+              <img src={user.profilePicture} alt="You" className="w-8 h-8 object-cover border border-kernel-700 shrink-0" />
+            ) : (
+              <div className="w-8 h-8 bg-kernel-900 border border-kernel-700 flex items-center justify-center font-mono text-xs text-kernel-400 shrink-0">
+                {user?.name?.charAt(0) || '?'}
+              </div>
+            )}
+            <input 
+              type="text" 
+              placeholder="Leave a comment..." 
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="flex-1 bg-transparent border-b border-kernel-700 focus:border-blue-500 outline-none text-kernel-100 text-sm font-mono pb-2 transition-colors placeholder-kernel-600"
+            />
+            <button type="submit" disabled={!commentText.trim()} className="px-4 py-1 text-xs font-mono font-bold bg-kernel-100 text-kernel-950 hover:bg-white disabled:opacity-50 transition-colors h-8 shadow-hard-sm cursor-pointer">
+              Submit
+            </button>
+          </form>
+        ) : (
+          <div className="p-4 mb-8 bg-kernel-900 border border-kernel-800 rounded-lg flex items-center justify-between font-mono text-xs text-kernel-400">
+            <span>Login to join the discussion on this journal.</span>
+            <Link to="/login" className="px-3 py-1.5 bg-white text-kernel-950 font-bold rounded hover:bg-zinc-200 transition-colors">
+              login
+            </Link>
+          </div>
+        )}
 
         <div className="space-y-6">
           {blog.comments?.map((comment, index) => (

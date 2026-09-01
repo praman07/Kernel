@@ -139,7 +139,10 @@ export default function Messages() {
           ${activeChat ? 'hidden' : 'flex w-full'} 
         `}
       >
-        <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex justify-between items-center whitespace-nowrap overflow-hidden">
+        <div className="p-4 border-b border-kernel-800 bg-kernel-900 flex items-center gap-3 whitespace-nowrap overflow-hidden">
+          <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer shrink-0">
+            <ArrowLeft size={14} /> cd ..
+          </button>
           <h2 className="text-sm font-bold text-kernel-100 flex items-center gap-2">
             <MessageSquare size={14} className="text-blue-500" /> CHAT_DAEMON
           </h2>
@@ -192,9 +195,9 @@ export default function Messages() {
                 {/* Back Button: cd.. */}
                 <button 
                   onClick={() => setActiveChat(null)} 
-                  className="px-2 py-1 bg-kernel-800 border border-kernel-700 text-kernel-400 hover:text-blue-400 font-mono text-xs transition-colors rounded-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-full border border-kernel-600 shadow-sm cursor-pointer"
                 >
-                  cd ..
+                  <ArrowLeft size={14} /> cd ..
                 </button>
                 <div className="flex flex-col">
                   <span className="text-xs font-bold text-kernel-100">@{activeChat.name.toLowerCase().replace(/\s+/g, '_')}</span>

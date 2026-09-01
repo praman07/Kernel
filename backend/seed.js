@@ -94,115 +94,183 @@ const seedData = async () => {
     const sundar = savedParodyUsers[3];
     const steve = savedParodyUsers[4];
 
-    // 3. Create Specific Projects for Praman
-    const pramanProjects = [
+    // 3. Create Projects
+    const projectsData = [
       {
         title: "Personal Portfolio v1",
-        description: "My first official portfolio showcasing all my freelance and personal work. Built with performance in mind. #Sheryians #SheryiansCodingSchool",
+        description: "My official portfolio showcasing freelance & fullstack work. Ultra responsive with GSAP animations & smooth page transitions. #Sheryians #SheryiansCodingSchool",
         liveLink: "https://pramanbhogal.vercel.app/",
-        tags: ["React", "GSAP", "Locomotive"],
+        githubLink: "https://github.com/praman07/portfolio",
+        tags: ["React", "GSAP", "Locomotive", "TailwindCSS"],
         creator: praman._id,
+        likes: [elon._id, sam._id, steve._id, dario._id]
       },
       {
         title: "Open House Real Estate",
-        description: "Fully finished real estate platform for a UK client. Features property listings, advanced search, and enquiry system. #Sheryians #RealEstate",
+        description: "Full-stack real estate platform for a UK client. Features property management, interactive search filters, and direct scheduling. #Sheryians #RealEstate",
         liveLink: "https://open-house-real-estate.vercel.app/",
-        tags: ["MERN", "Tailwind", "Redux"],
+        githubLink: "https://github.com/praman07/open-house",
+        tags: ["MERN", "Tailwind", "Redux", "Node.js"],
         creator: praman._id,
+        likes: [sam._id, sundar._id]
       },
       {
         title: "Heathrow Park Hub",
-        description: "Ongoing live client project for airport parking management. Real-time availability and booking engine. #ClientProject #Sheryians",
+        description: "Airport parking management platform. Features real-time spot reservations, payment gateway, and admin panel. #ClientProject #Sheryians",
         liveLink: "https://heathrowparkhub.vercel.app/",
-        tags: ["React", "Node.js", "MongoDB"],
-        creator: praman._id
+        tags: ["React", "Node.js", "MongoDB", "Express"],
+        creator: praman._id,
+        likes: [elon._id, sundar._id, dario._id]
       },
       {
         title: "Bhogal Auto Service",
-        description: "Auto service business platform. Customer data filling section intentionally incomplete for now. Rest of project completed. #BusinessSolution #Sheryians",
+        description: "Auto repair shop digital platform. Complete service booking flow and client management dashboard. #BusinessSolution #Sheryians",
         liveLink: "https://bhogalautoservice.vercel.app/",
-        tags: ["React", "Firebase"],
-        creator: praman._id
+        tags: ["React", "Firebase", "TailwindCSS"],
+        creator: praman._id,
+        likes: [steve._id]
       },
       {
         title: "Flutter Offline PDF Compressor",
-        description: "High-performance mobile utility to compress PDF files offline. Zero server upload, maximum privacy. #Flutter #Dart #SheryiansCodingSchool",
-        tags: ["Flutter", "Mobile", "PDF"],
-        creator: praman._id
+        description: "High-performance mobile utility to compress PDF files offline with zero server upload. Complete client privacy guaranteed. #Flutter #Dart #SheryiansCodingSchool",
+        tags: ["Flutter", "Dart", "Mobile", "PDF"],
+        creator: praman._id,
+        likes: [elon._id, sam._id]
       },
       {
-        title: "Mobile Motorbike Repair",
-        description: "On-demand motorbike repair service platform. Connects mechanics with riders in distress. #MobileApp #ServicePlatform #Sheryians",
-        tags: ["React Native", "Maps", "Socket.io"],
-        creator: praman._id
+        title: "Starship Telemetry Dashboard v4",
+        description: "Real-time WebSockets stream visualizer for SpaceX test flights. Processing 500k events/sec. Built in Rust and WebGPU. #SpaceX #Mars #Rust",
+        liveLink: "https://starship.spacex.com",
+        githubLink: "https://github.com/spacex/telemetry",
+        tags: ["Rust", "WebGPU", "WebSockets", "Telemetry"],
+        creator: elon._id,
+        likes: [sam._id, praman._id, steve._id]
+      },
+      {
+        title: "GPT-5 Inference Engine Core",
+        description: "Custom C++20 CUDA kernels optimizing matrix multiplications for next-gen reasoning models. 40% memory bandwidth savings. #AI #CUDA #LLM",
+        githubLink: "https://github.com/openai/inference-core",
+        tags: ["C++", "CUDA", "PyTorch", "AI"],
+        creator: sam._id,
+        likes: [dario._id, sundar._id, elon._id, praman._id]
+      },
+      {
+        title: "Claude Code CLI Subagent Swarm",
+        description: "Orchestrating autonomous parallel subagents for massive multi-file codebases with automated verification loops. #Anthropic #CLI",
+        githubLink: "https://github.com/anthropic/claude-cli",
+        tags: ["TypeScript", "Node.js", "AI", "Agentic"],
+        creator: dario._id,
+        likes: [sam._id, praman._id, steve._id]
+      },
+      {
+        title: "Gemini 2.5 Flash Multimodal Pipeline",
+        description: "Ultra-low latency streaming audio & video understanding SDK. WebRTC Native integration with hardware acceleration. #Google #Gemini",
+        githubLink: "https://github.com/google/gemini-sdk",
+        tags: ["Go", "WebRTC", "Python", "Multimodal"],
+        creator: sundar._id,
+        likes: [sam._id, elon._id]
+      },
+      {
+        title: "NeXTSTEP OS UI Component Library",
+        description: "Pixel-perfect modern React reconstruction of the legendary NeXTSTEP desktop operating system. Absolute minimalism. #Design #Minimalism",
+        liveLink: "https://nextstep-ui.dev",
+        tags: ["React", "CSS", "UI/UX", "Design"],
+        creator: steve._id,
+        likes: [praman._id, elon._id, sam._id, dario._id]
       }
     ];
 
-    const savedProjects = await Promise.all(pramanProjects.map(p => new Project(p).save()));
+    const savedProjects = await Promise.all(projectsData.map(p => new Project(p).save()));
 
-    // 4. Populate "Every Post" with high-profile comments
+    // 4. Populate Comments across Projects
+    const commentsPool = [
+      { user: elon._id, text: "This is insanely good. Shipping this to production today. 🚀" },
+      { user: sam._id, text: "The latency numbers here are impressive. Great architecture choices." },
+      { user: steve._id, text: "Clean typography and immaculate execution. Simplicity wins." },
+      { user: dario._id, text: "Well validated and structured. Appreciate the safety checks." },
+      { user: sundar._id, text: "Excellent work! Have you thought about integrating Cloud Run for auto-scaling?" },
+      { user: praman._id, text: "Thanks for the feedback! Built this with MERN & Tailwind stack. 🔥" }
+    ];
+
     for (const project of savedProjects) {
-      project.comments.push({
-        user: elon._id,
-        text: Math.random() > 0.5 ? "this is peak." : "bro accidentally built a startup. 🚀",
-        createdAt: new Date()
-      });
-      project.comments.push({
-        user: sam._id,
-        text: "the feed algo is getting scary good. compute looks high here.",
-        createdAt: new Date()
-      });
-      project.comments.push({
-        user: steve._id,
-        text: "finally, gradients are disappearing. simplicity is the ultimate sophistication.",
-        createdAt: new Date()
-      });
+      // Pick 2-4 random comments
+      const shuffled = [...commentsPool].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.floor(Math.random() * 3) + 2);
       
-      if (Math.random() > 0.7) {
+      for (const c of selected) {
         project.comments.push({
-          user: dario._id,
-          text: "Looks safe. We'll be monitoring this for emergent behaviors.",
-          createdAt: new Date()
+          user: c.user,
+          text: c.text,
+          createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000))
         });
       }
-      
       await project.save();
     }
 
-    // 5. Create standout activity moments
-    const buildUpdate = new Blog({
-      title: "How we scaled Heathrow Park Hub to 10k users",
-      content: "Scaling a live client project like #HeathrowParkHub required a complete rethink of our caching strategy. Here is what we did... #Sheryians #SheryiansCodingSchool #Backend",
-      author: praman._id,
-      tags: ["Scaling", "Architecture", "Success"]
-    });
-    
-    buildUpdate.comments.push({
-      user: sundar._id,
-      text: "Great insights on caching. Have you tried offloading this to Google Cloud Functions? #AIFirst",
-      createdAt: new Date()
-    });
-    buildUpdate.comments.push({
-      user: elon._id,
-      text: "someone funded this immediately.",
-      createdAt: new Date()
-    });
-    
-    await buildUpdate.save();
+    // 5. Create Standout Journal Entries (Blogs)
+    const blogsData = [
+      {
+        title: "How we scaled Heathrow Park Hub to handle 10k live bookings",
+        content: "Scaling a live client project like #HeathrowParkHub required a complete overhaul of our MongoDB index strategies and Redis caching layer. In this journal, I break down the exact bottlenecks we hit and how we solved them... #Sheryians #MERN #Scaling",
+        author: praman._id,
+        tags: ["Scaling", "Architecture", "Node.js", "MongoDB"],
+        likes: [sundar._id, elon._id, sam._id]
+      },
+      {
+        title: "Why Memes and First Principles are the Best Debugging Tools",
+        content: "When rockets explode or code throws 500 errors, you don't panic. You break down the system to atomic physics components. If the code is stupid, delete the code. Don't optimize a bad loop. #FirstPrinciples #SpaceX",
+        author: elon._id,
+        tags: ["Philosophy", "Engineering", "Leadership"],
+        likes: [praman._id, sam._id, steve._id]
+      },
+      {
+        title: "Building Software in the Age of Autonomous AI Agents",
+        content: "We are rapidly transitioning from writing line-by-line syntax to managing intent and verification pipelines. The developer of 2026 is an architect directing AI swarms. Here is how to prepare... #OpenAI #AGI",
+        author: sam._id,
+        tags: ["AI", "Future", "Architecture"],
+        likes: [dario._id, sundar._id, praman._id]
+      },
+      {
+        title: "The Lost Art of Interface Tactility",
+        content: "Software shouldn't feel like flat glass windows. It should feel responsive, alive, and crafted by human hands. Every pixel, drop shadow, and font weight must earn its right to exist. #NeXT #Design",
+        author: steve._id,
+        tags: ["Design", "UX", "Art"],
+        likes: [praman._id, elon._id]
+      }
+    ];
 
-    // 6. Social activity
+    const savedBlogs = await Promise.all(blogsData.map(b => new Blog(b).save()));
+
+    for (const blog of savedBlogs) {
+      blog.comments.push({
+        user: elon._id,
+        text: "Solid read. Re-tweeting to 200M people.",
+        createdAt: new Date()
+      });
+      blog.comments.push({
+        user: praman._id,
+        text: "Super insightful post!",
+        createdAt: new Date()
+      });
+      await blog.save();
+    }
+
+    // 6. Network Connections
     praman.followers.push(elon._id, sam._id, steve._id, sundar._id, dario._id);
+    praman.following.push(elon._id, sam._id, steve._id);
     elon.following.push(praman._id);
     sam.following.push(praman._id);
     steve.following.push(praman._id);
+    sundar.following.push(praman._id);
     
     await praman.save();
     await elon.save();
     await sam.save();
     await steve.save();
+    await sundar.save();
 
-    console.log('Seeding completed: High-profile active developer ecosystem launched.');
-    process.exit();
+    console.log('Seeding completed: Extensive, rich developer network & project ecosystem seeded successfully.');
+    process.exit(0);
   } catch (error) {
     console.error(error);
     process.exit(1);

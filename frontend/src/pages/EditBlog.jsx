@@ -64,7 +64,7 @@ export default function EditBlog() {
 
       await api.put(`/blogs/${id}`, blogData);
       toast.success('Journal updated');
-      setTimeout(() => navigate('/feed'), 1000);
+      setTimeout(() => navigate('/feed', { replace: true }), 1000);
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update');
     } finally {

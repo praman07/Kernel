@@ -76,7 +76,7 @@ export default function Feed() {
   return (
     <div className="w-full">
       {/* Feed Header / Tabs */}
-      <div className="sticky top-0 z-40 bg-kernel-950/80 backdrop-blur-md border-b border-kernel-800 flex items-center">
+      <div className="sticky top-0 z-40 bg-kernel-950/80 backdrop-blur-md flex items-center">
         <button 
           onClick={() => setActiveTab('For you')}
           className={`flex-1 hover:bg-kernel-900/50 transition-colors flex justify-center py-4 relative text-sm ${
@@ -102,7 +102,7 @@ export default function Feed() {
 
 
       {/* Inline Composer */}
-      <div className="p-4 border-b border-kernel-800 hidden sm:block relative">
+      <div className="px-4 py-3 hidden sm:block relative">
         <div className="flex gap-4">
           <Link to="/profile" className="shrink-0">
             {user?.profilePicture ? (
@@ -116,7 +116,7 @@ export default function Feed() {
           <div className="flex-1">
             <button
               onClick={() => setShowComposerChoice(true)}
-              className="w-full text-left bg-kernel-900 border border-kernel-800 hover:border-kernel-600 px-4 py-3 text-kernel-500 hover:text-kernel-400 font-mono text-sm transition-colors rounded-lg cursor-text"
+              className="w-full text-left bg-kernel-900/90 border border-kernel-600 hover:border-kernel-400 px-4 py-3 text-kernel-300 hover:text-kernel-100 font-mono text-sm transition-colors rounded-lg cursor-text shadow-sm"
             >
               What are you building today?
             </button>
@@ -125,29 +125,33 @@ export default function Feed() {
 
         {/* Post Type Picker */}
         {showComposerChoice && (
-          <div className="absolute top-full left-0 right-0 z-50 bg-kernel-950 border border-kernel-800 shadow-hard">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-kernel-800">
-              <span className="font-mono text-xs text-kernel-400">Choose post type</span>
-              <button onClick={() => setShowComposerChoice(false)} className="text-kernel-500 hover:text-kernel-200 p-1">
+          <div className="absolute top-full left-4 right-4 z-50 mt-2 bg-kernel-950 border-2 border-kernel-600 shadow-[0_10px_30px_rgba(0,0,0,0.9)] rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-kernel-700 bg-kernel-900/80">
+              <span className="font-mono text-xs font-bold text-kernel-200 uppercase tracking-wider">Choose post type</span>
+              <button onClick={() => setShowComposerChoice(false)} className="text-kernel-400 hover:text-kernel-100 p-1 rounded-md hover:bg-kernel-800 transition-colors cursor-pointer">
                 <X size={16} />
               </button>
             </div>
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 divide-x divide-kernel-700">
               <button
                 onClick={() => { setShowComposerChoice(false); navigate('/create-project'); }}
-                className="flex flex-col items-center gap-2 p-6 hover:bg-kernel-900 border-r border-kernel-800 transition-colors group"
+                className="flex flex-col items-center gap-2.5 p-6 bg-kernel-950 hover:bg-blue-950/30 transition-all group cursor-pointer"
               >
-                <TerminalSquare size={28} className="text-kernel-500 group-hover:text-blue-400 transition-colors" />
-                <span className="font-mono text-sm font-bold text-kernel-300 group-hover:text-kernel-100">Project</span>
-                <span className="font-mono text-[10px] text-kernel-600">Ship a new build</span>
+                <div className="p-3 rounded-full border border-kernel-700 bg-kernel-900 group-hover:border-blue-500 group-hover:bg-blue-600/20 transition-all">
+                  <TerminalSquare size={24} className="text-kernel-400 group-hover:text-blue-400 transition-colors" />
+                </div>
+                <span className="font-mono text-sm font-bold text-kernel-200 group-hover:text-white">Project</span>
+                <span className="font-mono text-[11px] text-kernel-500 group-hover:text-kernel-300">Ship a new build</span>
               </button>
               <button
                 onClick={() => { setShowComposerChoice(false); navigate('/create-blog'); }}
-                className="flex flex-col items-center gap-2 p-6 hover:bg-kernel-900 transition-colors group"
+                className="flex flex-col items-center gap-2.5 p-6 bg-kernel-950 hover:bg-emerald-950/30 transition-all group cursor-pointer"
               >
-                <BookOpen size={28} className="text-kernel-500 group-hover:text-emerald-400 transition-colors" />
-                <span className="font-mono text-sm font-bold text-kernel-300 group-hover:text-kernel-100">Journal</span>
-                <span className="font-mono text-[10px] text-kernel-600">Write a dev post</span>
+                <div className="p-3 rounded-full border border-kernel-700 bg-kernel-900 group-hover:border-emerald-500 group-hover:bg-emerald-600/20 transition-all">
+                  <BookOpen size={24} className="text-kernel-400 group-hover:text-emerald-400 transition-colors" />
+                </div>
+                <span className="font-mono text-sm font-bold text-kernel-200 group-hover:text-white">Journal</span>
+                <span className="font-mono text-[11px] text-kernel-500 group-hover:text-kernel-300">Write a dev post</span>
               </button>
             </div>
           </div>
@@ -162,7 +166,7 @@ export default function Feed() {
             <span className="font-mono text-xs text-kernel-600">fetching_segments...</span>
           </div>
         ) : feedItems.length > 0 ? (
-          <>
+          <div className="p-4 sm:p-5 space-y-6">
             {feedItems.slice(0, visibleCount).map(item => (
               item.type === 'project' 
                 ? <ProjectCard key={`p-${item._id}`} project={item} /> 
@@ -182,7 +186,7 @@ export default function Feed() {
                 </button>
               </div>
             )}
-          </>
+          </div>
         ) : (
           <div className="py-20 text-center px-4">
             <div className="w-16 h-16 border border-kernel-800 rounded-full flex items-center justify-center mx-auto mb-6 opacity-50">
@@ -194,7 +198,7 @@ export default function Feed() {
                 : 'The network is empty. Be the first to push.'}
             </p>
             {activeTab === 'Following' && (
-              <Link to="/explore" className="font-mono text-xs text-blue-400 hover:underline">→ find developers to follow</Link>
+              <Link to="/explore?view=top_devs" className="font-mono text-xs text-blue-400 hover:underline">→ find developers to follow</Link>
             )}
           </div>
         )}

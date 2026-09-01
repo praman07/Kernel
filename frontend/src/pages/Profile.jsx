@@ -167,6 +167,15 @@ export default function Profile() {
     }
   };
 
+  useEffect(() => {
+    if (showStatusModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showStatusModal]);
+
   const toggleFollowFromModal = async (targetId) => {
     if (!currentUser) return;
     try {
@@ -242,9 +251,9 @@ export default function Profile() {
       <div className="sticky top-0 z-40 bg-kernel-950/90 backdrop-blur-md border-b border-kernel-800 px-4 py-2.5 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
-          className="p-1.5 text-kernel-400 hover:text-kernel-100 hover:bg-kernel-900 rounded-lg transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-kernel-950 hover:bg-zinc-200 transition-colors font-mono text-xs font-bold rounded-4xl border border-kernel-600 shadow-sm cursor-pointer"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={14} /> cd ..
         </button>
         <div className="min-w-0">
           <h1 className="text-base font-bold text-kernel-100 leading-tight truncate">{profileUser.name}</h1>

@@ -7,21 +7,42 @@ const { Server } = require('socket.io');
 
 dotenv.config();
 
-const CLIENT_URL = process.env.CLIENT_URL || '*';
+const allowedOrigins = [
+  'https://kernelsocial.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
+if (process.env.CLIENT_URL && !allowedOrigins.includes(process.env.CLIENT_URL)) {
+  allowedOrigins.push(process.env.CLIENT_URL.replace(/\/$/, ''));
+}
 
 const app = express();
-app.use(cors({
-  origin: CLIENT_URL === '*' ? '*' : [CLIENT_URL, 'http://localhost:5173'],
-  credentials: true
-}));
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    // Permissive fallback if not matched explicitly
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: CLIENT_URL === '*' ? '*' : [CLIENT_URL, 'http://localhost:5173'],
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: '*',
+    methods: ["GET", "POST"]
   }
 });
 

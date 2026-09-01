@@ -92,13 +92,23 @@ const blogRoutes = require('./routes/blogRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 
-// Use Routes
+// Use Routes (Mounted at both root and /api prefixes)
 app.use('/auth', authRoutes);
 app.use('/api/auth', authRoutes);
+
+app.use('/users', userRoutes);
 app.use('/api/users', userRoutes);
+
+app.use('/projects', projectRoutes);
 app.use('/api/projects', projectRoutes);
+
+app.use('/blogs', blogRoutes);
 app.use('/api/blogs', blogRoutes);
+
+app.use('/notifications', notificationRoutes);
 app.use('/api/notifications', notificationRoutes);
+
+app.use('/messages', messageRoutes);
 app.use('/api/messages', messageRoutes);
 
 const PORT = process.env.PORT || 5000;
